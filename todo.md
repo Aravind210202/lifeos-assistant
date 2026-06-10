@@ -196,3 +196,40 @@
 - [ ] Test mobile 375px (sidebar, no horizontal scroll, dialogs fit)
 - [ ] Test reduced-motion toggle
 - [ ] Report any incomplete items
+
+
+## Layout Redesign (Care-Budget Style)
+
+### Phase 1: Theme & Colors
+- [ ] Switch from dark theme to light theme (white/light gray backgrounds)
+- [ ] Update CSS variables for light color palette
+- [ ] Adopt care-budget color scheme (soft pastels, light neutrals)
+- [ ] Update text colors for light backgrounds (dark text)
+- [ ] Adjust shadows and borders for light theme
+
+### Phase 2: Dashboard Layout
+- [ ] Redesign stat cards grid (mobile-first: 1 col, tablet: 2 cols, desktop: 3 cols)
+- [ ] Update card styling to match care-budget aesthetic
+- [ ] Reorganize dashboard sections for mobile-first layout
+- [ ] Adjust spacing and padding for mobile devices
+- [ ] Ensure responsive behavior across all breakpoints
+
+### Phase 3: Navigation & Structure
+- [ ] Keep sidebar navigation but style for light theme
+- [ ] Update sidebar colors and hover states
+- [ ] Adjust mobile navigation (hamburger menu if needed)
+- [ ] Update page headers and typography
+
+### Phase 4: Component Updates
+- [ ] Update all card components for light theme
+- [ ] Adjust chart colors for light backgrounds
+- [ ] Update form inputs and buttons
+- [ ] Ensure all interactive elements work with light theme
+- [ ] Test all pages with new color scheme
+
+### Phase 5: Verification
+- [ ] Test responsive design on mobile, tablet, desktop
+- [ ] Verify all functionality preserved
+- [ ] Check accessibility with light theme
+- [ ] Performance verification
+- [ ] Final checkpoint

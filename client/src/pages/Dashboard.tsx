@@ -135,7 +135,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8 page">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2" style={{
@@ -147,71 +147,71 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Welcome back to your LifeOS assistant</p>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+      {/* Quick Stats Grid - Mobile First */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         {/* Today's Reminders */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 p-6 cursor-pointer hover:from-blue-500/30 hover:to-cyan-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/20" onClick={() => navigate('/reminders')}>
+        <Card className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-300 mb-1 font-semibold">Today's Reminders</p>
-              <p className="text-3xl font-bold text-blue-100">{todayReminders.length}</p>
+              <p className="text-sm text-blue-600 mb-1 font-semibold">Today's Reminders</p>
+              <p className="text-3xl font-bold text-blue-900">{todayReminders.length}</p>
             </div>
-            <CheckCircle2 className="w-8 h-8 text-blue-400" />
+            <CheckCircle2 className="w-8 h-8 text-blue-500" />
           </div>
         </Card>
 
         {/* Overdue */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-red-500/20 to-pink-500/10 border border-red-500/30 p-6 cursor-pointer hover:from-red-500/30 hover:to-pink-500/20 transition-all hover:shadow-lg hover:shadow-red-500/20" onClick={() => navigate('/reminders')}>
+        <Card className="bg-gradient-to-br from-red-100 to-red-50 border border-red-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-red-300 mb-1 font-semibold">Overdue Items</p>
-              <p className="text-3xl font-bold text-red-100">{overdueReminders.length}</p>
+              <p className="text-sm text-red-600 mb-1 font-semibold">Overdue Items</p>
+              <p className="text-3xl font-bold text-red-900">{overdueReminders.length}</p>
             </div>
-            <AlertCircle className="w-8 h-8 text-red-400" />
+            <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
         </Card>
 
         {/* Monthly Spending */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/30 p-6 cursor-pointer hover:from-purple-500/30 hover:to-violet-500/20 transition-all hover:shadow-lg hover:shadow-purple-500/20" onClick={() => navigate('/finance')}>
+        <Card className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-purple-300 mb-1 font-semibold">This Month Spent</p>
-              <p className="text-3xl font-bold text-purple-100">${totalSpent.toFixed(2)}</p>
+              <p className="text-sm text-purple-600 mb-1 font-semibold">This Month Spent</p>
+              <p className="text-3xl font-bold text-purple-900">${totalSpent.toFixed(2)}</p>
             </div>
-            <TrendingUp className="w-8 h-8 text-purple-400" />
+            <TrendingUp className="w-8 h-8 text-purple-500" />
           </div>
         </Card>
 
         {/* Active Goals */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 p-6 cursor-pointer hover:from-green-500/30 hover:to-emerald-500/20 transition-all hover:shadow-lg hover:shadow-green-500/20" onClick={() => navigate('/goals')}>
+        <Card className="bg-gradient-to-br from-green-100 to-green-50 border border-green-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/goals')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-green-300 mb-1 font-semibold">Active Goals</p>
-              <p className="text-3xl font-bold text-green-100">{activeGoals.length}</p>
+              <p className="text-sm text-green-600 mb-1 font-semibold">Active Goals</p>
+              <p className="text-3xl font-bold text-green-900">{activeGoals.length}</p>
             </div>
-            <Target className="w-8 h-8 text-green-400" />
+            <Target className="w-8 h-8 text-green-500" />
           </div>
         </Card>
 
         {/* Weekly Spending */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30 p-6 cursor-pointer hover:from-orange-500/30 hover:to-amber-500/20 transition-all hover:shadow-lg hover:shadow-orange-500/20" onClick={() => navigate('/finance')}>
+        <Card className="bg-gradient-to-br from-orange-100 to-orange-50 border border-orange-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-orange-300 mb-1 font-semibold">This Week Spent</p>
-              <p className="text-3xl font-bold text-orange-100">${weeklySpent.toFixed(2)}</p>
+              <p className="text-sm text-orange-600 mb-1 font-semibold">This Week Spent</p>
+              <p className="text-3xl font-bold text-orange-900">${weeklySpent.toFixed(2)}</p>
             </div>
-            <BarChart3 className="w-8 h-8 text-orange-400" />
+            <BarChart3 className="w-8 h-8 text-orange-500" />
           </div>
         </Card>
 
         {/* Subscriptions */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-pink-500/20 to-rose-500/10 border border-pink-500/30 p-6 cursor-pointer hover:from-pink-500/30 hover:to-rose-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/20" onClick={() => navigate('/finance')}>
+        <Card className="bg-gradient-to-br from-pink-100 to-pink-50 border border-pink-200 p-6 cursor-pointer hover:shadow-md transition-all" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-pink-300 mb-1 font-semibold">Active Subscriptions</p>
-              <p className="text-3xl font-bold text-pink-100">{subscriptions.length}</p>
+              <p className="text-sm text-pink-600 mb-1 font-semibold">Active Subscriptions</p>
+              <p className="text-3xl font-bold text-pink-900">{subscriptions.length}</p>
             </div>
-            <Briefcase className="w-8 h-8 text-pink-400" />
+            <Briefcase className="w-8 h-8 text-pink-500" />
           </div>
         </Card>
       </div>
