@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bell, Download, Save, AlertCircle } from "lucide-react";
+import { Link2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import {
 } from "@/lib/notificationService";
 import { triggerDailyReminder, triggerBudgetCheck } from "@/lib/notificationScheduler";
 import { collectAllData, downloadCSV } from "@/lib/sheetsExport";
+import { loadSheetsConfig, saveSheetsConfig, testWebhookConnection, isValidWebhookUrl } from "@/lib/sheetsSync";
 import { downloadExcelFile } from "@/lib/excelExport";
 
 export default function Settings() {
@@ -17,6 +19,10 @@ export default function Settings() {
   const [budgetThreshold, setBudgetThreshold] = useState(75);
   const [dailyReminderTime, setDailyReminderTime] = useState("08:00");
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null);
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [sheetsEnabled, setSheetsEnabled] = useState(false);
+  const [testingWebhook, setTestingWebhook] = useState(false);
+  const [webhookStatus, setWebhookStatus] = useState<'idle' | 'connected' | 'error'>('idle');
 
   useEffect(() => {
     // Check notification permission
@@ -29,6 +35,11 @@ export default function Settings() {
     setNotificationsEnabled(settings.enabled);
     setBudgetThreshold(settings.budgetThreshold * 100);
     setDailyReminderTime(settings.dailyReminderTime);
+
+    // Load sheets config
+    const sheetsConfig = loadSheetsConfig();
+    setWebhookUrl(sheetsConfig.webhookUrl);
+    setSheetsEnabled(sheetsConfig.enabled);
   }, []);
 
   const handleEnableNotifications = async () => {
@@ -70,6 +81,52 @@ export default function Settings() {
       console.error(error);
       toast.error("Failed to export Excel");
     }
+  };
+
+  const handleTestWebhook = async () => {
+    if (!webhookUrl) {
+      toast.error("Please enter a webhook URL");
+      return;
+    }
+
+    if (!isValidWebhookUrl(webhookUrl)) {
+      toast.error("Invalid webhook URL");
+      return;
+    }
+
+    setTestingWebhook(true);
+    setWebhookStatus('idle');
+
+    try {
+      const success = await testWebhookConnection(webhookUrl);
+      if (success) {
+        setWebhookStatus('connected');
+        toast.success("Webhook connected successfully!");
+      } else {
+        setWebhookStatus('error');
+        toast.error("Webhook connection failed");
+      }
+    } catch (error) {
+      setWebhookStatus('error');
+      toast.error("Failed to test webhook");
+    } finally {
+      setTestingWebhook(false);
+    }
+  };
+
+  const handleSaveSheetsConfig = () => {
+    if (!webhookUrl && sheetsEnabled) {
+      toast.error("Please enter a webhook URL");
+      return;
+    }
+
+    if (webhookUrl && !isValidWebhookUrl(webhookUrl)) {
+      toast.error("Invalid webhook URL");
+      return;
+    }
+
+    saveSheetsConfig({ webhookUrl, enabled: sheetsEnabled });
+    toast.success("Google Sheets sync settings saved!");
   };
 
   const handleTestBudgetAlert = () => {
@@ -228,14 +285,61 @@ export default function Settings() {
                     Export as Excel
                   </Button>
                 </div>
-                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
-                  <p className="text-xs text-purple-300">
-                    <strong>Google Sheets Export:</strong> Set up with your email{" "}
-                    <span className="text-purple-200">varavindsrivatsan@gmail.com</span>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="sheets-sync"
+                      checked={sheetsEnabled}
+                      onChange={(e) => setSheetsEnabled(e.target.checked)}
+                      className="w-4 h-4 rounded"
+                    />
+                    <label htmlFor="sheets-sync" className="text-sm font-medium text-purple-300">
+                      Enable Google Sheets Live Sync
+                    </label>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Paste your Google Apps Script webhook URL here"
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    disabled={!sheetsEnabled}
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-50"
+                  />
+                  <p className="text-xs text-purple-300/70">
+                    Get your webhook URL from your Google Apps Script project. Transactions will sync automatically when enabled.
                   </p>
-                  <p className="text-xs text-purple-300/70 mt-2">
-                    Coming soon - will automatically sync your data to a shared Google Sheet
-                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleTestWebhook}
+                      disabled={!sheetsEnabled || testingWebhook}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Link2 className="w-4 h-4 mr-2" />
+                      {testingWebhook ? 'Testing...' : 'Test Connection'}
+                    </Button>
+                    <Button
+                      onClick={handleSaveSheetsConfig}
+                      disabled={!sheetsEnabled && !webhookUrl}
+                      className="flex-1"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Settings
+                    </Button>
+                  </div>
+                  {webhookStatus === 'connected' && (
+                    <div className="flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-lg p-3">
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span className="text-xs text-green-300">Webhook connected and ready</span>
+                    </div>
+                  )}
+                  {webhookStatus === 'error' && (
+                    <div className="flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+                      <X className="w-4 h-4 text-red-400" />
+                      <span className="text-xs text-red-300">Webhook connection failed</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -43,6 +43,16 @@
 }
 
 :root {
+  /* Module accent colors */
+  --module-dashboard: #818cf8;
+  --module-reminders: #fbbf24;
+  --module-notes: #38bdf8;
+  --module-finance: #34d399;
+  --module-goals: #a78bfa;
+  --module-jobs: #fb7185;
+  --module-memory: #22d3ee;
+  --module-ai: #e879f9;
+  
   --primary: var(--color-blue-700);
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-600);
@@ -300,5 +310,65 @@
 
   .animate-celebrate {
     animation: celebrate 0.6s var(--ease-out);
+  }
+
+  /* Page fade + rise transition */
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .page {
+    animation: pageEnter 0.4s var(--ease-out);
+  }
+
+  /* Staggered card entrance */
+  @keyframes cardEnter {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-enter {
+    animation: cardEnter 0.5s var(--ease-out) both;
+  }
+
+  /* Stagger delay utilities */
+  .stagger-1 { animation-delay: 50ms; }
+  .stagger-2 { animation-delay: 100ms; }
+  .stagger-3 { animation-delay: 150ms; }
+  .stagger-4 { animation-delay: 200ms; }
+  .stagger-5 { animation-delay: 250ms; }
+  .stagger-6 { animation-delay: 300ms; }
+  .stagger-7 { animation-delay: 350ms; }
+  .stagger-8 { animation-delay: 400ms; }
+  .stagger-9 { animation-delay: 450ms; }
+  .stagger-10 { animation-delay: 500ms; }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .page,
+    .card-enter,
+    [class*="stagger-"] {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

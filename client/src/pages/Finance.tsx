@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import { parseCommBankCSV, categorizeTransaction, validateCSVFile } from "@/lib/csvParser";
+import { MODULE_COLORS, CATEGORY_COLORS } from "@/lib/moduleColors";
+import { syncAddTransaction, syncDeleteTransaction, loadSheetsConfig } from "@/lib/sheetsSync";
 
 const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316", "#6366f1", "#84cc16", "#06b6d4", "#64748b"];
 
@@ -45,7 +47,7 @@ export default function Finance() {
     setTransactions(getTransactions());
   }, []);
 
-  const addTransaction = () => {
+  const addTransaction = async () => {
     if (!formData.description.trim() || !formData.amount) {
       toast.error("Please fill in all fields");
       return;
@@ -63,7 +65,20 @@ export default function Finance() {
     const updated = [...transactions, newTransaction];
     setTransactions(updated);
     saveTransactions(updated);
-    toast.success("Transaction added!");
+
+    // Sync to Google Sheets if enabled
+    const sheetsConfig = loadSheetsConfig();
+    if (sheetsConfig.enabled && sheetsConfig.webhookUrl) {
+      const synced = await syncAddTransaction(newTransaction, sheetsConfig.webhookUrl);
+      if (synced) {
+        toast.success("Transaction added & synced to Google Sheets!");
+      } else {
+        toast.success("Transaction added (sync failed - check webhook URL)");
+      }
+    } else {
+      toast.success("Transaction added!");
+    }
+
     setShowForm(false);
     setFormData({
       description: "",
@@ -74,11 +89,23 @@ export default function Finance() {
     });
   };
 
-  const deleteTransaction = (id: string) => {
+  const deleteTransaction = async (id: string) => {
     const updated = transactions.filter((t) => t.id !== id);
     setTransactions(updated);
     saveTransactions(updated);
-    toast.success("Transaction deleted!");
+
+    // Sync deletion to Google Sheets if enabled
+    const sheetsConfig = loadSheetsConfig();
+    if (sheetsConfig.enabled && sheetsConfig.webhookUrl) {
+      const synced = await syncDeleteTransaction(id, sheetsConfig.webhookUrl);
+      if (synced) {
+        toast.success("Transaction deleted & synced to Google Sheets!");
+      } else {
+        toast.success("Transaction deleted (sync failed - check webhook URL)");
+      }
+    } else {
+      toast.success("Transaction deleted!");
+    }
   };
 
   const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +197,12 @@ export default function Finance() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8 page">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2 flex-wrap gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground">Finance</h1>
+          <h1 className="text-3xl md:text-4xl font-bold" style={{
+            background: `linear-gradient(135deg, ${MODULE_COLORS.finance}, #10b981)`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>Finance</h1>
           <div className="flex gap-2">
             <label className="cursor-pointer">
               <input

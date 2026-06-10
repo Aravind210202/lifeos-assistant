@@ -152,3 +152,47 @@
 - [ ] Spending insights and trend analysis
 - [x] Settings page with notification controls
 - [x] Test notification functionality
+
+
+## Manus Brief Implementation (NEW)
+
+### Part 1: Module Colors & Theme
+- [x] Define module accent colors in index.css as CSS variables
+- [x] Create moduleColors.ts with module hues and category color map
+- [x] Apply module colors to page headers (gradient text/underline)
+- [x] Update sidebar nav icons to show module color when active
+- [ ] Apply category colors to Finance charts (pie, bars, legend)
+
+### Part 2: Animations
+- [x] Add page class to all page roots for fade+rise transitions
+- [x] Implement staggered card entrance animations (50-70ms stagger)
+- [x] Create CountUp component for animated stat values
+- [ ] Enable recharts animations on all charts (~800ms)
+- [ ] Add progress bar fill animations from 0 to value
+- [ ] Wire completion celebrations (confetti + checkmark) for reminders/goals
+- [x] Verify prefers-reduced-motion guard disables all animations
+
+### Part 3: Google Sheets Live Sync
+- [x] Create sheetsSync.ts with webhook management functions
+- [ ] Integrate syncAddTransaction/syncUpdateTransaction/syncDeleteTransaction into Finance
+- [ ] Update transaction toasts to show "synced to Google Sheets" when enabled
+- [x] Add Settings UI card for webhook URL input and status
+- [ ] Add "Sync all transactions now" button in Settings
+- [ ] Relabel "Export to Google Sheets" button to "Download CSV"
+
+### Part 4: Finance Visualizations
+- [ ] Add monthly income vs expense grouped bar chart (last 6 months)
+- [ ] Add balance trend line/area chart (cumulative, last 6 months)
+- [ ] Add budget progress bars (animated, color-coded by category)
+- [ ] Add top stat cards (Income, Expenses, Net, Savings %) with CountUp
+- [ ] Add compact finance widget to Dashboard (4-week spending + Net)
+- [ ] Add empty state messages to all charts
+
+### Part 5: Final Verification
+- [ ] Run pnpm check (zero errors)
+- [ ] Run pnpm build (success)
+- [ ] Test all 9 pages (add/edit/delete items)
+- [ ] Test Finance webhook (with URL and without)
+- [ ] Test mobile 375px (sidebar, no horizontal scroll, dialogs fit)
+- [ ] Test reduced-motion toggle
+- [ ] Report any incomplete items

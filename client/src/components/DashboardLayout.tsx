@@ -1,19 +1,20 @@
 import { useIsMobile } from "@/hooks/useMobile";
+import { MODULE_COLORS } from "@/lib/moduleColors";
 import { LayoutDashboard, BarChart3, FileText, Target, Briefcase, Brain, Zap, Menu, X, Settings } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "./ui/button";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: FileText, label: "Reminders", path: "/reminders" },
-  { icon: FileText, label: "Notes", path: "/notes" },
-  { icon: BarChart3, label: "Finance", path: "/finance" },
-  { icon: Target, label: "Goals", path: "/goals" },
-        { icon: Briefcase, label: "Job Applications", path: "/jobs" },
-  { icon: Brain, label: "Personal Memory", path: "/memory" },
-  { icon: Zap, label: "AI Assistant", path: "/ai-assistant" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/", color: MODULE_COLORS.dashboard },
+  { icon: FileText, label: "Reminders", path: "/reminders", color: MODULE_COLORS.reminders },
+  { icon: FileText, label: "Notes", path: "/notes", color: MODULE_COLORS.notes },
+  { icon: BarChart3, label: "Finance", path: "/finance", color: MODULE_COLORS.finance },
+  { icon: Target, label: "Goals", path: "/goals", color: MODULE_COLORS.goals },
+  { icon: Briefcase, label: "Job Applications", path: "/jobs", color: MODULE_COLORS.jobs },
+  { icon: Brain, label: "Personal Memory", path: "/memory", color: MODULE_COLORS.memory },
+  { icon: Zap, label: "AI Assistant", path: "/ai-assistant", color: MODULE_COLORS.ai },
+  { icon: Settings, label: "Settings", path: "/settings", color: "#64748b" },
 ];
 
 interface DashboardLayoutProps {
@@ -59,11 +60,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-white/10"
                       : "text-foreground hover:bg-white/10"
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5" style={{ color: item.color }} />
                   <span>{item.label}</span>
                 </button>
               );

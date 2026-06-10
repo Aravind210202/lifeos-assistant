@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, CheckCircle2, AlertCircle, TrendingUp, Target, Briefcase, BarChart3 } from "lucide-react";
+import { MODULE_COLORS } from "@/lib/moduleColors";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { getReminders, addReminder, getTransactions, getGoals, getJobApplications, Reminder, Transaction, Goal, JobApplication } from "@/lib/localStorage";
@@ -137,7 +138,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>
+        <h1 className="text-4xl font-bold mb-2" style={{
+          background: `linear-gradient(135deg, ${MODULE_COLORS.dashboard}, #38bdf8)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>Dashboard</h1>
         <p className="text-muted-foreground">Welcome back to your LifeOS assistant</p>
       </div>
 
