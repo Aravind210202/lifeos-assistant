@@ -131,13 +131,13 @@ export default function Reminders() {
       case "low":
         return "bg-gradient-to-r from-blue-500/25 to-cyan-500/15 border-l-4 border-blue-500 hover:from-blue-500/35 hover:to-cyan-500/25";
       default:
-        return "bg-white/10 border border-white/20";
+        return "bg-gray-50 border border-gray-200";
     }
   };
 
   const ReminderCard = ({ reminder }: { reminder: Reminder }) => (
     <div
-      className={`backdrop-blur-xl rounded-lg p-4 shadow-lg card flex items-start justify-between transition-all hover:shadow-xl ${getPriorityBgColor(
+      className={` rounded-lg p-4 shadow-lg card flex items-start justify-between transition-all hover:shadow-xl ${getPriorityBgColor(
         reminder.priority
       )}`}
     >
@@ -154,7 +154,7 @@ export default function Reminders() {
           {reminder.title}
         </h3>
         {reminder.description && (
-          <p className="text-sm text-white/60 mt-1">{reminder.description}</p>
+          <p className="text-sm text-gray-600 mt-1">{reminder.description}</p>
         )}
         <div className="flex gap-2 mt-3 flex-wrap">
           <span className={`text-xs px-3 py-1 rounded-full ${getPriorityColor(reminder.priority)}`}>
@@ -163,7 +163,7 @@ export default function Reminders() {
           <span className="text-xs bg-purple-500/30 text-purple-200 px-3 py-1 rounded-full border border-purple-500/50">
             {reminder.category}
           </span>
-          <span className="text-xs bg-white/10 text-white/70 px-3 py-1 rounded-full">
+          <span className="text-xs bg-gray-50 text-gray-900/70 px-3 py-1 rounded-full">
             {new Date(reminder.dueDate).toLocaleDateString()}
           </span>
         </div>
@@ -173,13 +173,13 @@ export default function Reminders() {
           onClick={() => toggleComplete(reminder.id)}
           className="p-2 hover:bg-green-500/30 rounded-lg transition-all hover:scale-110"
         >
-          <CheckCircle2 className="w-5 h-5 text-green-400" />
+          <CheckCircle2 className="w-5 h-5 text-green-500" />
         </button>
         <button
           onClick={() => deleteReminder(reminder.id)}
           className="p-2 hover:bg-red-500/30 rounded-lg transition-all hover:scale-110"
         >
-          <Trash2 className="w-5 h-5 text-red-400" />
+          <Trash2 className="w-5 h-5 text-red-500" />
         </button>
       </div>
     </div>
@@ -200,7 +200,7 @@ export default function Reminders() {
 
       {/* Add Reminder Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20">
+        <DialogContent className=" bg-white border border-gray-200">
           <DialogHeader>
             <DialogTitle>Add Reminder</DialogTitle>
           </DialogHeader>
@@ -212,7 +212,7 @@ export default function Reminders() {
                 placeholder="Reminder title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -221,7 +221,7 @@ export default function Reminders() {
                 placeholder="Add details..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={3}
               />
             </div>
@@ -231,7 +231,7 @@ export default function Reminders() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -250,7 +250,7 @@ export default function Reminders() {
                       priority: e.target.value as "low" | "medium" | "high",
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {PRIORITIES.map((p) => (
                     <option key={p} value={p}>
@@ -266,7 +266,7 @@ export default function Reminders() {
                 type="date"
                 value={formData.dueDate}
                 onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="flex gap-2 pt-4">
@@ -288,7 +288,7 @@ export default function Reminders() {
       {/* Today's Reminders */}
       {todayReminders.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-blue-300 mb-4">Today's Reminders</h2>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">Today's Reminders</h2>
           <div className="space-y-3">
             {todayReminders.map((r) => (
               <ReminderCard key={r.id} reminder={r} />
@@ -300,7 +300,7 @@ export default function Reminders() {
       {/* Overdue Reminders */}
       {overdueReminders.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-red-400 mb-4">Overdue</h2>
+          <h2 className="text-2xl font-bold text-red-500 mb-4">Overdue</h2>
           <div className="space-y-3">
             {overdueReminders.map((r) => (
               <ReminderCard key={r.id} reminder={r} />
@@ -312,7 +312,7 @@ export default function Reminders() {
       {/* Upcoming Reminders */}
       {upcomingReminders.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-green-300 mb-4">Upcoming</h2>
+          <h2 className="text-2xl font-bold text-green-600 mb-4">Upcoming</h2>
           <div className="space-y-3">
             {upcomingReminders.map((r) => (
               <ReminderCard key={r.id} reminder={r} />
@@ -324,17 +324,17 @@ export default function Reminders() {
       {/* Completed Reminders */}
       {completedReminders.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white/50 mb-4">Completed</h2>
+          <h2 className="text-2xl font-bold text-gray-500 mb-4">Completed</h2>
           <div className="space-y-3">
             {completedReminders.map((r) => (
               <div
                 key={r.id}
-                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-lg p-4 shadow-lg card flex items-start justify-between opacity-60"
+                className=" bg-white/5 border border-gray-100 rounded-lg p-4 shadow-lg card flex items-start justify-between opacity-60"
               >
                 <div className="flex-1">
-                  <h3 className="font-semibold text-white/50 line-through">{r.title}</h3>
+                  <h3 className="font-semibold text-gray-500 line-through">{r.title}</h3>
                   <div className="flex gap-2 mt-2">
-                    <span className="text-xs bg-green-500/30 text-green-300 px-3 py-1 rounded-full">
+                    <span className="text-xs bg-green-500/30 text-green-600 px-3 py-1 rounded-full">
                       Completed
                     </span>
                   </div>
@@ -343,7 +343,7 @@ export default function Reminders() {
                   onClick={() => toggleComplete(r.id)}
                   className="p-2 hover:bg-blue-500/30 rounded-lg transition-all"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-blue-400" />
+                  <CheckCircle2 className="w-5 h-5 text-blue-500" />
                 </button>
               </div>
             ))}

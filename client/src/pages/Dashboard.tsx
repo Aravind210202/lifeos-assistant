@@ -220,7 +220,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Reminders Section */}
         <div className="lg:col-span-2">
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <Card className=" bg-gray-50 border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold text-foreground">Today's Reminders</h2>
@@ -242,12 +242,12 @@ export default function Dashboard() {
                     }`}
                   >
                     <p className={`font-semibold ${
-                      reminder.priority === "high" ? "text-red-300" :
+                      reminder.priority === "high" ? "text-red-600" :
                       reminder.priority === "medium" ? "text-yellow-300" :
-                      "text-blue-300"
+                      "text-blue-600"
                     }`}>{reminder.title}</p>
                     <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-foreground">
+                      <span className="text-xs px-3 py-1 rounded-full bg-gray-50 text-foreground">
                         {reminder.category}
                       </span>
                       <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase ${
@@ -267,7 +267,7 @@ export default function Dashboard() {
 
         {/* Overdue Section */}
         <div>
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <Card className=" bg-gray-50 border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-foreground mb-4">Overdue Items</h2>
             {overdueReminders.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">All caught up!</p>
@@ -278,7 +278,7 @@ export default function Dashboard() {
                     key={reminder.id}
                     className="p-3 rounded-lg bg-red-500/10 border border-red-500/20"
                   >
-                    <p className="font-medium text-red-400 text-sm">{reminder.title}</p>
+                    <p className="font-medium text-red-500 text-sm">{reminder.title}</p>
                   </div>
                 ))}
               </div>
@@ -289,13 +289,13 @@ export default function Dashboard() {
 
       {/* Active Goals */}
       {activeGoals.length > 0 && (
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 mt-6">
+        <Card className=" bg-gray-50 border-gray-200 p-6 mt-6">
           <h2 className="text-xl font-semibold text-foreground mb-4">Active Goals</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {activeGoals.map(goal => (
-              <div key={goal.id} className="p-4 rounded-lg bg-white/5 border border-white/10">
+              <div key={goal.id} className="p-4 rounded-lg bg-white/5 border border-gray-100">
                 <p className="font-medium text-foreground mb-2">{goal.title}</p>
-                <div className="w-full bg-white/10 rounded-full h-2 mb-2">
+                <div className="w-full bg-gray-50 rounded-full h-2 mb-2">
                   <div
                     className="bg-gradient-to-r from-primary to-blue-500 h-2 rounded-full transition-all"
                     style={{ width: `${goal.progress}%` }}
@@ -310,7 +310,7 @@ export default function Dashboard() {
 
       {/* Add Reminder Dialog */}
       <Dialog open={showAddReminder} onOpenChange={setShowAddReminder}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border-white/20">
+        <DialogContent className=" bg-white border-gray-200">
           <DialogHeader>
             <DialogTitle>Add Reminder</DialogTitle>
           </DialogHeader>
@@ -321,7 +321,7 @@ export default function Dashboard() {
                 value={reminderForm.title}
                 onChange={(e) => setReminderForm({ ...reminderForm, title: e.target.value })}
                 placeholder="Enter reminder title"
-                className="bg-white/10 border-white/20"
+                className="bg-gray-50 border-gray-200"
               />
             </div>
             <div>
@@ -330,7 +330,7 @@ export default function Dashboard() {
                 value={reminderForm.description}
                 onChange={(e) => setReminderForm({ ...reminderForm, description: e.target.value })}
                 placeholder="Optional description"
-                className="bg-white/10 border-white/20"
+                className="bg-gray-50 border-gray-200"
                 rows={3}
               />
             </div>
@@ -338,7 +338,7 @@ export default function Dashboard() {
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Category</label>
                 <Select value={reminderForm.category} onValueChange={(value) => setReminderForm({ ...reminderForm, category: value as any })}>
-                  <SelectTrigger className="bg-white/10 border-white/20">
+                  <SelectTrigger className="bg-gray-50 border-gray-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -354,7 +354,7 @@ export default function Dashboard() {
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Priority</label>
                 <Select value={reminderForm.priority} onValueChange={(value) => setReminderForm({ ...reminderForm, priority: value as any })}>
-                  <SelectTrigger className="bg-white/10 border-white/20">
+                  <SelectTrigger className="bg-gray-50 border-gray-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

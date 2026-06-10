@@ -117,7 +117,7 @@ export default function JobApplications() {
 
       {/* Add Application Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20">
+        <DialogContent className=" bg-white border border-gray-200">
           <DialogHeader>
             <DialogTitle>Add Job Application</DialogTitle>
           </DialogHeader>
@@ -130,7 +130,7 @@ export default function JobApplications() {
                   placeholder="Company name"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -140,7 +140,7 @@ export default function JobApplications() {
                   placeholder="Job title"
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function JobApplications() {
                 placeholder="City, Country"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -161,7 +161,7 @@ export default function JobApplications() {
                 placeholder="https://..."
                 value={formData.jobLink}
                 onChange={(e) => setFormData({ ...formData, jobLink: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -169,7 +169,7 @@ export default function JobApplications() {
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {PIPELINE_STAGES.map((stage) => (
                   <option key={stage} value={stage}>
@@ -203,7 +203,7 @@ export default function JobApplications() {
               {(applicationsByStatus[stage] || []).map((app) => (
                 <div
                   key={app.id}
-                  className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-3 shadow-lg hover:shadow-xl transition-all group card"
+                  className=" bg-gray-50 border border-gray-200 rounded-lg p-3 shadow-lg hover:shadow-xl transition-all group card"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">

@@ -201,18 +201,18 @@
 ## Layout Redesign (Care-Budget Style)
 
 ### Phase 1: Theme & Colors
-- [ ] Switch from dark theme to light theme (white/light gray backgrounds)
-- [ ] Update CSS variables for light color palette
-- [ ] Adopt care-budget color scheme (soft pastels, light neutrals)
-- [ ] Update text colors for light backgrounds (dark text)
-- [ ] Adjust shadows and borders for light theme
+- [x] Switch from dark theme to light theme (white/light gray backgrounds)
+- [x] Update CSS variables for light color palette
+- [x] Adopt care-budget color scheme (soft pastels, light neutrals)
+- [x] Update text colors for light backgrounds (dark text)
+- [x] Adjust shadows and borders for light theme
 
 ### Phase 2: Dashboard Layout
-- [ ] Redesign stat cards grid (mobile-first: 1 col, tablet: 2 cols, desktop: 3 cols)
-- [ ] Update card styling to match care-budget aesthetic
-- [ ] Reorganize dashboard sections for mobile-first layout
-- [ ] Adjust spacing and padding for mobile devices
-- [ ] Ensure responsive behavior across all breakpoints
+- [x] Redesign stat cards grid (mobile-first: 1 col, tablet: 2 cols, desktop: 3 cols)
+- [x] Update card styling to match care-budget aesthetic
+- [x] Reorganize dashboard sections for mobile-first layout
+- [x] Adjust spacing and padding for mobile devices
+- [x] Ensure responsive behavior across all breakpoints
 
 ### Phase 3: Navigation & Structure
 - [ ] Keep sidebar navigation but style for light theme

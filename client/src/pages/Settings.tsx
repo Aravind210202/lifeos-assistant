@@ -164,14 +164,14 @@ export default function Settings() {
 
       <div className="space-y-6 max-w-2xl">
         {/* Notifications Section */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 p-6">
+        <Card className=" bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Bell className="w-6 h-6 text-blue-400" />
-              <h2 className="text-xl font-bold text-blue-100">Notifications</h2>
+              <Bell className="w-6 h-6 text-blue-500" />
+              <h2 className="text-xl font-bold text-blue-900">Notifications</h2>
             </div>
             {notificationPermission === "granted" && (
-              <span className="text-xs bg-green-500/30 text-green-300 px-3 py-1 rounded-full">
+              <span className="text-xs bg-green-500/30 text-green-600 px-3 py-1 rounded-full">
                 Enabled
               </span>
             )}
@@ -191,22 +191,22 @@ export default function Settings() {
             ) : null}
 
             <div>
-              <label className="text-sm font-medium text-blue-300 mb-2 block">
+              <label className="text-sm font-medium text-blue-600 mb-2 block">
                 Daily Reminder Time
               </label>
               <input
                 type="time"
                 value={dailyReminderTime}
                 onChange={(e) => setDailyReminderTime(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
-              <p className="text-xs text-blue-300/70 mt-1">
+              <p className="text-xs text-blue-600/70 mt-1">
                 You'll receive a notification at this time each day with today's reminders
               </p>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-blue-300 mb-2 block">
+              <label className="text-sm font-medium text-blue-600 mb-2 block">
                 Budget Alert Threshold: {budgetThreshold}%
               </label>
               <input
@@ -218,7 +218,7 @@ export default function Settings() {
                 onChange={(e) => setBudgetThreshold(parseInt(e.target.value))}
                 className="w-full"
               />
-              <p className="text-xs text-blue-300/70 mt-1">
+              <p className="text-xs text-blue-600/70 mt-1">
                 Alert when spending reaches this % of your budget
               </p>
             </div>
@@ -244,18 +244,18 @@ export default function Settings() {
         </Card>
 
         {/* Data Export Section */}
-        <Card className="backdrop-blur-xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/30 p-6">
+        <Card className=" bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/30 p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Download className="w-6 h-6 text-purple-400" />
-              <h2 className="text-xl font-bold text-purple-100">Data Export</h2>
+              <Download className="w-6 h-6 text-purple-500" />
+              <h2 className="text-xl font-bold text-purple-900">Data Export</h2>
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-semibold text-purple-200 mb-2">Export Options</h3>
-              <p className="text-sm text-purple-300/70 mb-4">
+              <p className="text-sm text-purple-600/70 mb-4">
                 Download all your LifeOS data as CSV or export to Google Sheets for backup and analysis.
               </p>
             </div>
@@ -294,7 +294,7 @@ export default function Settings() {
                       onChange={(e) => setSheetsEnabled(e.target.checked)}
                       className="w-4 h-4 rounded"
                     />
-                    <label htmlFor="sheets-sync" className="text-sm font-medium text-purple-300">
+                    <label htmlFor="sheets-sync" className="text-sm font-medium text-purple-600">
                       Enable Google Sheets Live Sync
                     </label>
                   </div>
@@ -304,9 +304,9 @@ export default function Settings() {
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     disabled={!sheetsEnabled}
-                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-50"
+                    className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:opacity-50"
                   />
-                  <p className="text-xs text-purple-300/70">
+                  <p className="text-xs text-purple-600/70">
                     Get your webhook URL from your Google Apps Script project. Transactions will sync automatically when enabled.
                   </p>
                   <div className="flex gap-2">
@@ -330,14 +330,14 @@ export default function Settings() {
                   </div>
                   {webhookStatus === 'connected' && (
                     <div className="flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-lg p-3">
-                      <Check className="w-4 h-4 text-green-400" />
-                      <span className="text-xs text-green-300">Webhook connected and ready</span>
+                      <Check className="w-4 h-4 text-green-500" />
+                      <span className="text-xs text-green-600">Webhook connected and ready</span>
                     </div>
                   )}
                   {webhookStatus === 'error' && (
                     <div className="flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-lg p-3">
-                      <X className="w-4 h-4 text-red-400" />
-                      <span className="text-xs text-red-300">Webhook connection failed</span>
+                      <X className="w-4 h-4 text-red-500" />
+                      <span className="text-xs text-red-600">Webhook connection failed</span>
                     </div>
                   )}
                 </div>
@@ -347,7 +347,7 @@ export default function Settings() {
         </Card>
 
         {/* About Section */}
-        <Card className="backdrop-blur-xl bg-white/5 border border-white/10 p-6">
+        <Card className=" bg-white/5 border border-gray-100 p-6">
           <h2 className="text-lg font-bold text-foreground mb-3">About LifeOS</h2>
           <div className="space-y-2 text-sm text-muted-foreground">
             <p>Version: 1.0.0</p>

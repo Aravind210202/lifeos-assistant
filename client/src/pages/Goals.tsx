@@ -137,7 +137,7 @@ export default function Goals() {
 
       {/* Add/Edit Goal Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white border border-gray-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingId ? "Edit Goal" : "Add Goal"}</DialogTitle>
           </DialogHeader>
@@ -149,7 +149,7 @@ export default function Goals() {
                 placeholder="Goal title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -158,7 +158,7 @@ export default function Goals() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -172,7 +172,7 @@ export default function Goals() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="active">Active</option>
                   <option value="paused">Paused</option>
@@ -186,7 +186,7 @@ export default function Goals() {
                 placeholder="Why is this goal important?"
                 value={formData.whyItMatters}
                 onChange={(e) => setFormData({ ...formData, whyItMatters: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={3}
               />
             </div>
@@ -197,7 +197,7 @@ export default function Goals() {
                 placeholder="What's the next step?"
                 value={formData.nextAction}
                 onChange={(e) => setFormData({ ...formData, nextAction: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -209,7 +209,7 @@ export default function Goals() {
                   max="100"
                   value={formData.progress}
                   onChange={(e) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -218,7 +218,7 @@ export default function Goals() {
                   type="date"
                   value={formData.deadline}
                   onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
@@ -246,7 +246,7 @@ export default function Goals() {
             <p className="text-muted-foreground col-span-full text-center py-8">No active goals yet</p>
           ) : (
             activeGoals.map((goal) => (
-              <div key={goal.id} className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-lg card">
+              <div key={goal.id} className=" bg-gray-50 border border-gray-200 rounded-lg p-6 shadow-lg card">
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h3 className="font-semibold text-foreground">{goal.title}</h3>
@@ -256,7 +256,7 @@ export default function Goals() {
                     onClick={() => editGoal(goal)}
                     className="p-1 hover:bg-blue-500/20 rounded transition-colors"
                   >
-                    <Edit2 className="w-4 h-4 text-blue-400" />
+                    <Edit2 className="w-4 h-4 text-blue-500" />
                   </button>
                 </div>
 
@@ -269,7 +269,7 @@ export default function Goals() {
                     <span className="text-muted-foreground">Progress</span>
                     <span className="text-foreground font-medium">{goal.progress}%</span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="w-full bg-gray-50 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                       style={{ width: `${goal.progress}%` }}
@@ -292,7 +292,7 @@ export default function Goals() {
                 <div className="flex gap-2 pt-3">
                   <button
                     onClick={() => deleteGoal(goal.id)}
-                    className="flex-1 px-3 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                    className="flex-1 px-3 py-1 text-xs bg-red-500/20 text-red-500 rounded hover:bg-red-500/30 transition-colors"
                   >
                     Delete
                   </button>
@@ -309,16 +309,16 @@ export default function Goals() {
           <h2 className="text-xl font-semibold text-foreground mb-4">Completed Goals</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {completedGoals.map((goal) => (
-              <div key={goal.id} className="backdrop-blur-xl bg-white/10 border border-green-500/30 rounded-lg p-6 shadow-lg card opacity-75">
+              <div key={goal.id} className=" bg-gray-50 border border-green-500/30 rounded-lg p-6 shadow-lg card opacity-75">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-semibold text-green-400 line-through">{goal.title}</h3>
+                    <h3 className="font-semibold text-green-500 line-through">{goal.title}</h3>
                     <p className="text-xs text-muted-foreground">{goal.category}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => deleteGoal(goal.id)}
-                  className="w-full px-3 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                  className="w-full px-3 py-1 text-xs bg-red-500/20 text-red-500 rounded hover:bg-red-500/30 transition-colors"
                 >
                   Delete
                 </button>

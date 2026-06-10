@@ -108,14 +108,14 @@ export default function Notes() {
             placeholder="Search notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
       </div>
 
       {/* Add Note Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white border border-gray-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
           </DialogHeader>
@@ -127,7 +127,7 @@ export default function Notes() {
                 placeholder="Note title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -136,7 +136,7 @@ export default function Notes() {
                 placeholder="Write your note..."
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={5}
               />
             </div>
@@ -146,7 +146,7 @@ export default function Notes() {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -162,7 +162,7 @@ export default function Notes() {
                   placeholder="tag1, tag2, tag3"
                   value={formData.tags}
                   onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function Notes() {
           </p>
         ) : (
           filteredNotes.map((note) => (
-            <div key={note.id} className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-4 shadow-lg card">
+            <div key={note.id} className=" bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-lg card">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">{note.title}</h3>
@@ -194,7 +194,7 @@ export default function Notes() {
                   onClick={() => deleteNote(note.id)}
                   className="p-1 hover:bg-red-500/20 rounded transition-colors"
                 >
-                  <Trash2 className="w-4 h-4 text-red-400" />
+                  <Trash2 className="w-4 h-4 text-red-500" />
                 </button>
               </div>
 
@@ -205,7 +205,7 @@ export default function Notes() {
               {note.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {note.tags.map((tag) => (
-                    <span key={tag} className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                    <span key={tag} className="text-xs bg-blue-500/20 text-blue-500 px-2 py-1 rounded">
                       #{tag}
                     </span>
                   ))}

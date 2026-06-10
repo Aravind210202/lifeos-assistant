@@ -148,7 +148,7 @@ export default function Memory() {
 
       {/* Add/Edit Memory Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white border border-gray-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingId ? "Edit Memory" : "Add Memory"}</DialogTitle>
           </DialogHeader>
@@ -158,7 +158,7 @@ export default function Memory() {
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -174,7 +174,7 @@ export default function Memory() {
                 placeholder="e.g., 'Current Job Title' or 'GitHub URL'"
                 value={formData.key}
                 onChange={(e) => setFormData({ ...formData, key: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -183,7 +183,7 @@ export default function Memory() {
                 placeholder="Enter the information to remember..."
                 value={formData.value}
                 onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={4}
               />
             </div>
@@ -216,10 +216,10 @@ export default function Memory() {
                 {categoryItems.map((item) => (
                   <div
                     key={item.id}
-                    className={`backdrop-blur-xl border rounded-lg p-4 shadow-lg card transition-opacity ${
+                    className={` border rounded-lg p-4 shadow-lg card transition-opacity ${
                       item.enabled
-                        ? "bg-white/10 border-white/20"
-                        : "bg-white/5 border-white/10 opacity-50"
+                        ? "bg-gray-50 border-gray-200"
+                        : "bg-white/5 border-gray-100 opacity-50"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -232,13 +232,13 @@ export default function Memory() {
                           onClick={() => editItem(item)}
                           className="p-1 hover:bg-blue-500/20 rounded transition-colors"
                         >
-                          <Edit2 className="w-4 h-4 text-blue-400" />
+                          <Edit2 className="w-4 h-4 text-blue-500" />
                         </button>
                         <button
                           onClick={() => deleteItem(item.id)}
                           className="p-1 hover:bg-red-500/20 rounded transition-colors"
                         >
-                          <Trash2 className="w-4 h-4 text-red-400" />
+                          <Trash2 className="w-4 h-4 text-red-500" />
                         </button>
                       </div>
                     </div>
@@ -246,7 +246,7 @@ export default function Memory() {
                       onClick={() => toggleEnabled(item.id)}
                       className={`text-xs px-2 py-1 rounded transition-colors ${
                         item.enabled
-                          ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                          ? "bg-green-500/20 text-green-500 hover:bg-green-500/30"
                           : "bg-gray-500/20 text-gray-400 hover:bg-gray-500/30"
                       }`}
                     >

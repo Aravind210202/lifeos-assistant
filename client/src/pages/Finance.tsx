@@ -211,7 +211,7 @@ export default function Finance() {
                 onChange={handleCSVImport}
                 className="hidden"
               />
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/20 text-green-500 hover:bg-green-500/30 transition-colors">
                 <Upload className="w-4 h-4" />
                 <span className="text-sm font-medium">Import CSV</span>
               </div>
@@ -230,24 +230,24 @@ export default function Finance() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+        <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
           <p className="text-sm text-muted-foreground mb-2">Total Income</p>
-          <p className="text-3xl font-bold text-green-400">${stats.totalIncome.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-green-500">${stats.totalIncome.toFixed(2)}</p>
         </div>
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+        <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
           <p className="text-sm text-muted-foreground mb-2">Total Expenses</p>
-          <p className="text-3xl font-bold text-red-400">${stats.totalExpense.toFixed(2)}</p>
+          <p className="text-3xl font-bold text-red-500">${stats.totalExpense.toFixed(2)}</p>
         </div>
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+        <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
           <p className="text-sm text-muted-foreground mb-2">Balance</p>
-          <p className={`text-3xl font-bold ${stats.totalIncome - stats.totalExpense >= 0 ? "text-green-400" : "text-red-400"}`}>
+          <p className={`text-3xl font-bold ${stats.totalIncome - stats.totalExpense >= 0 ? "text-green-500" : "text-red-500"}`}>
             ${(stats.totalIncome - stats.totalExpense).toFixed(2)}
           </p>
         </div>
       </div>
 
       {/* Weekly Summary Chart */}
-      <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card mb-8">
+      <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card mb-8">
         <h2 className="text-xl font-semibold text-foreground mb-4">Weekly Spending Summary</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={stats.weeklyChartData}>
@@ -263,7 +263,7 @@ export default function Finance() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Category Breakdown */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+        <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
           <h2 className="text-xl font-semibold text-foreground mb-4">Spending by Category</h2>
           {stats.categoryBreakdown.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
@@ -291,16 +291,16 @@ export default function Finance() {
         </div>
 
         {/* Monthly Trend */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+        <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
           <h2 className="text-xl font-semibold text-foreground mb-4">Recent Transactions</h2>
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {transactions.slice(-10).reverse().map((t) => (
-              <div key={t.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+              <div key={t.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-gray-50 transition-colors">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">{t.description}</p>
                   <p className="text-xs text-muted-foreground">{t.category} • {t.date}</p>
                 </div>
-                <p className={`font-semibold ${t.type === "income" ? "text-green-400" : "text-red-400"}`}>
+                <p className={`font-semibold ${t.type === "income" ? "text-green-500" : "text-red-500"}`}>
                   {t.type === "income" ? "+" : "-"}${t.amount.toFixed(2)}
                 </p>
               </div>
@@ -311,7 +311,7 @@ export default function Finance() {
 
       {/* Add Transaction Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20">
+        <DialogContent className=" bg-white border border-gray-200">
           <DialogHeader>
             <DialogTitle>Add Transaction</DialogTitle>
           </DialogHeader>
@@ -323,7 +323,7 @@ export default function Finance() {
                 placeholder="e.g., Grocery shopping"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -334,7 +334,7 @@ export default function Finance() {
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div>
@@ -342,7 +342,7 @@ export default function Finance() {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value as "income" | "expense" })}
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="expense">Expense</option>
                   <option value="income">Income</option>
@@ -354,7 +354,7 @@ export default function Finance() {
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -369,13 +369,13 @@ export default function Finance() {
                 type="date"
                 value={formData.date}
                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div className="flex gap-2 justify-end pt-4">
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 rounded-lg border border-white/20 text-foreground hover:bg-white/10 transition-colors"
+                className="px-4 py-2 rounded-lg border border-gray-200 text-foreground hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
@@ -392,7 +392,7 @@ export default function Finance() {
 
       {/* CSV Import Preview Dialog */}
       <Dialog open={showImport} onOpenChange={setShowImport}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white border border-gray-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Import Transactions Preview</DialogTitle>
           </DialogHeader>
@@ -402,10 +402,10 @@ export default function Finance() {
             </p>
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {importPreview.map((t, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-white/5 border border-white/10">
+                <div key={idx} className="p-3 rounded-lg bg-white/5 border border-gray-100">
                   <div className="flex items-center justify-between mb-1">
                     <p className="font-medium text-foreground">{t.description}</p>
-                    <p className={`font-semibold ${t.type === "income" ? "text-green-400" : "text-red-400"}`}>
+                    <p className={`font-semibold ${t.type === "income" ? "text-green-500" : "text-red-500"}`}>
                       {t.type === "income" ? "+" : "-"}${t.amount.toFixed(2)}
                     </p>
                   </div>
@@ -419,13 +419,13 @@ export default function Finance() {
             <div className="flex gap-2 justify-end pt-4">
               <button
                 onClick={() => setShowImport(false)}
-                className="px-4 py-2 rounded-lg border border-white/20 text-foreground hover:bg-white/10 transition-colors"
+                className="px-4 py-2 rounded-lg border border-gray-200 text-foreground hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmImport}
-                className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+                className="px-4 py-2 rounded-lg bg-green-500/20 text-green-500 hover:bg-green-500/30 transition-colors"
               >
                 Import {importPreview.length} Transactions
               </button>
@@ -435,25 +435,25 @@ export default function Finance() {
       </Dialog>
 
       {/* Transactions List */}
-      <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card">
+      <div className=" bg-gray-50 border border-gray-200 rounded-lg p-6 card">
         <h2 className="text-xl font-semibold text-foreground mb-4">All Transactions</h2>
         <div className="space-y-2 max-h-96 overflow-y-auto">
           {transactions.length > 0 ? (
             transactions.map((t) => (
-              <div key={t.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group">
+              <div key={t.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-gray-50 transition-colors group">
                 <div className="flex-1">
                   <p className="text-sm font-medium text-foreground">{t.description}</p>
                   <p className="text-xs text-muted-foreground">{t.category} • {t.date}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <p className={`font-semibold ${t.type === "income" ? "text-green-400" : "text-red-400"}`}>
+                  <p className={`font-semibold ${t.type === "income" ? "text-green-500" : "text-red-500"}`}>
                     {t.type === "income" ? "+" : "-"}${t.amount.toFixed(2)}
                   </p>
                   <button
                     onClick={() => deleteTransaction(t.id)}
                     className="p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/20 rounded"
                   >
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
               </div>

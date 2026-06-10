@@ -81,13 +81,13 @@ export default function AIAssistant() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "resume":
-        return "bg-purple-500/20 text-purple-400";
+        return "bg-purple-500/20 text-purple-500";
       case "cover-letter":
-        return "bg-blue-500/20 text-blue-400";
+        return "bg-blue-500/20 text-blue-500";
       case "question":
         return "bg-yellow-500/20 text-yellow-400";
       case "scoring":
-        return "bg-green-500/20 text-green-400";
+        return "bg-green-500/20 text-green-500";
       default:
         return "bg-gray-500/20 text-gray-400";
     }
@@ -111,7 +111,7 @@ export default function AIAssistant() {
 
       {/* Add Task Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
+        <DialogContent className=" bg-white border border-gray-200 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create AI Task</DialogTitle>
           </DialogHeader>
@@ -121,7 +121,7 @@ export default function AIAssistant() {
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="question">Answer Question</option>
                 <option value="resume">Generate Resume</option>
@@ -136,7 +136,7 @@ export default function AIAssistant() {
                 placeholder="Task title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
@@ -145,7 +145,7 @@ export default function AIAssistant() {
                 placeholder="Describe what you need..."
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={5}
               />
             </div>
@@ -165,7 +165,7 @@ export default function AIAssistant() {
           <h2 className="text-xl font-semibold text-yellow-400 mb-4">Pending Approval</h2>
           <div className="space-y-3">
             {pendingTasks.map((task) => (
-              <div key={task.id} className="backdrop-blur-xl bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 shadow-lg card">
+              <div key={task.id} className=" bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 shadow-lg card">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground">{task.title}</h3>
@@ -178,14 +178,14 @@ export default function AIAssistant() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => approveTask(task.id)}
-                    className="flex-1 px-3 py-2 text-sm bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-3 py-2 text-sm bg-green-500/20 text-green-500 rounded hover:bg-green-500/30 transition-colors flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     Approve
                   </button>
                   <button
                     onClick={() => deleteTask(task.id)}
-                    className="flex-1 px-3 py-2 text-sm bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-3 py-2 text-sm bg-red-500/20 text-red-500 rounded hover:bg-red-500/30 transition-colors flex items-center justify-center gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
                     Reject
@@ -200,10 +200,10 @@ export default function AIAssistant() {
       {/* Approved Tasks */}
       {approvedTasks.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold text-green-400 mb-4">Approved & Ready</h2>
+          <h2 className="text-xl font-semibold text-green-500 mb-4">Approved & Ready</h2>
           <div className="space-y-3">
             {approvedTasks.map((task) => (
-              <div key={task.id} className="backdrop-blur-xl bg-green-500/10 border border-green-500/30 rounded-lg p-4 shadow-lg card">
+              <div key={task.id} className=" bg-green-500/10 border border-green-500/30 rounded-lg p-4 shadow-lg card">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground">{task.title}</h3>
@@ -215,7 +215,7 @@ export default function AIAssistant() {
                     onClick={() => deleteTask(task.id)}
                     className="p-1 hover:bg-red-500/20 rounded transition-colors"
                   >
-                    <Trash2 className="w-4 h-4 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
                 <p className="text-sm text-muted-foreground">{task.content}</p>
