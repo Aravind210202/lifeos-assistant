@@ -11,6 +11,8 @@ import Finance from "./pages/Finance";
 import Goals from "./pages/Goals";
 import JobApplications from "./pages/JobApplications";
 import Memory from "./pages/Memory";
+import Home from "./pages/Home";
+import AIAssistant from "./pages/AIAssistant";
 import NotFound from "./pages/NotFound";
 
 function Router() {
@@ -22,8 +24,9 @@ function Router() {
       <Route path="/finance" component={Finance} />
       <Route path="/goals" component={Goals} />
       <Route path="/jobs" component={JobApplications} />
-      <Route path="/memory" component={Memory} />
-      <Route path="/404" component={NotFound} />
+      <Route path={"\\"} component={Home} />
+      <Route path={"/ai-assistant"} component={AIAssistant} />
+      <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
