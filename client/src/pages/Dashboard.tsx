@@ -144,68 +144,68 @@ export default function Dashboard() {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         {/* Today's Reminders */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/reminders')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/10 border border-blue-500/30 p-6 cursor-pointer hover:from-blue-500/30 hover:to-cyan-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/20" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Today's Reminders</p>
-              <p className="text-3xl font-bold text-foreground">{todayReminders.length}</p>
+              <p className="text-sm text-blue-300 mb-1 font-semibold">Today's Reminders</p>
+              <p className="text-3xl font-bold text-blue-100">{todayReminders.length}</p>
             </div>
-            <CheckCircle2 className="w-8 h-8 text-primary/50" />
+            <CheckCircle2 className="w-8 h-8 text-blue-400" />
           </div>
         </Card>
 
         {/* Overdue */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/reminders')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-red-500/20 to-pink-500/10 border border-red-500/30 p-6 cursor-pointer hover:from-red-500/30 hover:to-pink-500/20 transition-all hover:shadow-lg hover:shadow-red-500/20" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Overdue Items</p>
-              <p className="text-3xl font-bold text-red-400">{overdueReminders.length}</p>
+              <p className="text-sm text-red-300 mb-1 font-semibold">Overdue Items</p>
+              <p className="text-3xl font-bold text-red-100">{overdueReminders.length}</p>
             </div>
-            <AlertCircle className="w-8 h-8 text-red-400/50" />
+            <AlertCircle className="w-8 h-8 text-red-400" />
           </div>
         </Card>
 
         {/* Monthly Spending */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-purple-500/20 to-violet-500/10 border border-purple-500/30 p-6 cursor-pointer hover:from-purple-500/30 hover:to-violet-500/20 transition-all hover:shadow-lg hover:shadow-purple-500/20" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">This Month Spent</p>
-              <p className="text-3xl font-bold text-foreground">${totalSpent.toFixed(2)}</p>
+              <p className="text-sm text-purple-300 mb-1 font-semibold">This Month Spent</p>
+              <p className="text-3xl font-bold text-purple-100">${totalSpent.toFixed(2)}</p>
             </div>
-            <TrendingUp className="w-8 h-8 text-primary/50" />
+            <TrendingUp className="w-8 h-8 text-purple-400" />
           </div>
         </Card>
 
         {/* Active Goals */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/goals')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-green-500/20 to-emerald-500/10 border border-green-500/30 p-6 cursor-pointer hover:from-green-500/30 hover:to-emerald-500/20 transition-all hover:shadow-lg hover:shadow-green-500/20" onClick={() => navigate('/goals')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Active Goals</p>
-              <p className="text-3xl font-bold text-foreground">{activeGoals.length}</p>
+              <p className="text-sm text-green-300 mb-1 font-semibold">Active Goals</p>
+              <p className="text-3xl font-bold text-green-100">{activeGoals.length}</p>
             </div>
-            <Target className="w-8 h-8 text-primary/50" />
+            <Target className="w-8 h-8 text-green-400" />
           </div>
         </Card>
 
         {/* Weekly Spending */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30 p-6 cursor-pointer hover:from-orange-500/30 hover:to-amber-500/20 transition-all hover:shadow-lg hover:shadow-orange-500/20" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">This Week Spent</p>
-              <p className="text-3xl font-bold text-foreground">${weeklySpent.toFixed(2)}</p>
+              <p className="text-sm text-orange-300 mb-1 font-semibold">This Week Spent</p>
+              <p className="text-3xl font-bold text-orange-100">${weeklySpent.toFixed(2)}</p>
             </div>
-            <BarChart3 className="w-8 h-8 text-primary/50" />
+            <BarChart3 className="w-8 h-8 text-orange-400" />
           </div>
         </Card>
 
         {/* Subscriptions */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
+        <Card className="backdrop-blur-xl bg-gradient-to-br from-pink-500/20 to-rose-500/10 border border-pink-500/30 p-6 cursor-pointer hover:from-pink-500/30 hover:to-rose-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/20" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Active Subscriptions</p>
-              <p className="text-3xl font-bold text-foreground">{subscriptions.length}</p>
+              <p className="text-sm text-pink-300 mb-1 font-semibold">Active Subscriptions</p>
+              <p className="text-3xl font-bold text-pink-100">{subscriptions.length}</p>
             </div>
-            <Briefcase className="w-8 h-8 text-primary/50" />
+            <Briefcase className="w-8 h-8 text-pink-400" />
           </div>
         </Card>
       </div>
@@ -216,15 +216,10 @@ export default function Dashboard() {
         <div className="lg:col-span-2">
           <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-foreground">Today's Reminders</h2>
-              <Button
-                size="sm"
-                onClick={() => setShowAddReminder(true)}
-                className="gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add
-              </Button>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Today's Reminders</h2>
+                <p className="text-sm text-muted-foreground mt-1">{todayReminders.length} reminder{todayReminders.length !== 1 ? 's' : ''} today</p>
+              </div>
             </div>
 
             {todayReminders.length === 0 ? (
@@ -234,17 +229,25 @@ export default function Dashboard() {
                 {todayReminders.map(reminder => (
                   <div
                     key={reminder.id}
-                    className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                    className={`p-4 rounded-lg border-l-4 transition-all hover:shadow-lg ${
+                      reminder.priority === "high" ? "bg-red-500/15 border-red-500 hover:bg-red-500/25" :
+                      reminder.priority === "medium" ? "bg-yellow-500/15 border-yellow-500 hover:bg-yellow-500/25" :
+                      "bg-blue-500/15 border-blue-500 hover:bg-blue-500/25"
+                    }`}
                   >
-                    <p className="font-medium text-foreground">{reminder.title}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary">
+                    <p className={`font-semibold ${
+                      reminder.priority === "high" ? "text-red-300" :
+                      reminder.priority === "medium" ? "text-yellow-300" :
+                      "text-blue-300"
+                    }`}>{reminder.title}</p>
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className="text-xs px-3 py-1 rounded-full bg-white/10 text-foreground">
                         {reminder.category}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        reminder.priority === "high" ? "bg-red-500/20 text-red-400" :
-                        reminder.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
-                        "bg-blue-500/20 text-blue-400"
+                      <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase ${
+                        reminder.priority === "high" ? "bg-red-500/40 text-red-200" :
+                        reminder.priority === "medium" ? "bg-yellow-500/40 text-yellow-200" :
+                        "bg-blue-500/40 text-blue-200"
                       }`}>
                         {reminder.priority}
                       </span>
