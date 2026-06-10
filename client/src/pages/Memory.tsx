@@ -1,221 +1,270 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, Trash2, Edit2, ToggleRight } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useState } from "react";
+import { Plus, Trash2, Edit2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-const MEMORY_TYPES = [
-  "resume_detail",
-  "education",
-  "work_history",
-  "achievement",
-  "preferred_answer",
-  "salary_preference",
-  "work_rights",
-  "skill",
-  "writing_tone",
-  "recurring_info",
-] as const;
+interface MemoryItem {
+  id: string;
+  category: string;
+  key: string;
+  value: string;
+  enabled: boolean;
+  createdAt: string;
+}
+
+const CATEGORIES = [
+  "Resume Details",
+  "Education",
+  "Work History",
+  "Achievements",
+  "Preferred Answers",
+  "Salary Preferences",
+  "Visa/Work Rights",
+  "Skills",
+  "Writing Tone",
+  "Other",
+];
+
+function getMemoryItems(): MemoryItem[] {
+  const stored = localStorage.getItem("lifeos_memory");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveMemoryItems(items: MemoryItem[]) {
+  localStorage.setItem("lifeos_memory", JSON.stringify(items));
+}
 
 export default function Memory() {
-  const { user, loading } = useAuth();
+  const [items, setItems] = useState<MemoryItem[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [selectedType, setSelectedType] = useState<(typeof MEMORY_TYPES)[number]>("resume_detail");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    type: "resume_detail" as const,
+    category: "Resume Details",
     key: "",
     value: "",
   });
 
-  const memories = trpc.memory.list.useQuery(undefined, { enabled: !!user });
-  const createMemory = trpc.memory.save.useMutation({
-    onSuccess: () => {
-      memories.refetch();
-      setShowForm(false);
-      setFormData({
-        type: "resume_detail" as const,
-        key: "",
-        value: "",
-      });
-      toast.success("Memory saved!");
-    },
-    onError: () => {
-      toast.error("Failed to save memory");
-    },
-  });
-  const updateMemory = trpc.memory.update.useMutation({
-    onSuccess: () => {
-      memories.refetch();
+  useEffect(() => {
+    setItems(getMemoryItems());
+  }, []);
+
+  const addOrUpdateItem = () => {
+    if (!formData.key.trim() || !formData.value.trim()) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    if (editingId) {
+      const updated = items.map((item) =>
+        item.id === editingId
+          ? { ...item, category: formData.category, key: formData.key, value: formData.value }
+          : item
+      );
+      setItems(updated);
+      saveMemoryItems(updated);
       toast.success("Memory updated!");
-    },
-  });
-  const deleteMemory = trpc.memory.delete.useMutation({
-    onSuccess: () => {
-      memories.refetch();
-      toast.success("Memory deleted!");
-    },
-  });
+    } else {
+      const newItem: MemoryItem = {
+        id: Date.now().toString(),
+        category: formData.category,
+        key: formData.key,
+        value: formData.value,
+        enabled: true,
+        createdAt: new Date().toISOString(),
+      };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      const updated = [...items, newItem];
+      setItems(updated);
+      saveMemoryItems(updated);
+      toast.success("Memory saved!");
+    }
+
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({
+      category: "Resume Details",
+      key: "",
+      value: "",
+    });
+  };
+
+  const deleteItem = (id: string) => {
+    const updated = items.filter((item) => item.id !== id);
+    setItems(updated);
+    saveMemoryItems(updated);
+    toast.success("Memory deleted!");
+  };
+
+  const toggleEnabled = (id: string) => {
+    const updated = items.map((item) =>
+      item.id === id ? { ...item, enabled: !item.enabled } : item
     );
-  }
+    setItems(updated);
+    saveMemoryItems(updated);
+  };
 
-  const filteredMemories = memories.data?.filter((m: any) => m.type === selectedType) || [];
+  const editItem = (item: MemoryItem) => {
+    setFormData({
+      category: item.category,
+      key: item.key,
+      value: item.value,
+    });
+    setEditingId(item.id);
+    setShowForm(true);
+  };
+
+  const groupedItems = CATEGORIES.reduce(
+    (acc, cat) => {
+      acc[cat] = items.filter((item) => item.category === cat);
+      return acc;
+    },
+    {} as Record<string, MemoryItem[]>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8 page">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">Personal Memory</h1>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Button
+            onClick={() => {
+              setEditingId(null);
+              setFormData({
+                category: "Resume Details",
+                key: "",
+                value: "",
+              });
+              setShowForm(true);
+            }}
+            className="gap-2"
+          >
             <Plus className="w-4 h-4" />
             Add Memory
           </Button>
         </div>
-        <p className="text-muted-foreground">Store and manage your personal information for AI assistance</p>
+        <p className="text-muted-foreground">Store personal information for AI-powered recommendations</p>
       </div>
 
-      {/* Add Memory Dialog */}
+      {/* Add/Edit Memory Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-w-2xl">
+        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add Personal Memory</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Memory" : "Add Memory"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Memory Type</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Category</label>
               <select
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {MEMORY_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type.replace(/_/g, " ").toUpperCase()}
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Key/Label</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Key / Label</label>
               <input
                 type="text"
-                placeholder="e.g., 'Python', 'Leadership', 'Current Company'"
+                placeholder="e.g., 'Current Job Title' or 'GitHub URL'"
                 value={formData.key}
                 onChange={(e) => setFormData({ ...formData, key: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Value/Details</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Value / Content</label>
               <textarea
-                placeholder="Enter the details or content for this memory..."
+                placeholder="Enter the information to remember..."
                 value={formData.value}
                 onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 rows={4}
               />
             </div>
             <div className="flex gap-2 justify-end pt-4">
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingId(null);
+                }}
+              >
                 Cancel
               </Button>
-              <Button
-                onClick={() => {
-                  if (!formData.key.trim() || !formData.value.trim()) {
-                    toast.error("Please fill all fields");
-                    return;
-                  }
-                  createMemory.mutate({
-                    type: formData.type,
-                    key: formData.key,
-                    value: formData.value,
-                  });
-                }}
-                disabled={createMemory.isPending}
-              >
-                {createMemory.isPending ? "Saving..." : "Save"}
-              </Button>
+              <Button onClick={addOrUpdateItem}>{editingId ? "Update" : "Save"}</Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Memory Type Tabs */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {MEMORY_TYPES.map((type) => (
-          <button
-            key={type}
-            onClick={() => setSelectedType(type)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              selectedType === type
-                ? "backdrop-blur-xl bg-primary text-primary-foreground border border-primary/50"
-                : "backdrop-blur-xl bg-white/10 border border-white/20 text-foreground hover:bg-white/20"
-            }`}
-          >
-            {type.replace(/_/g, " ")}
-          </button>
-        ))}
-      </div>
+      {/* Memory Items by Category */}
+      <div className="space-y-8">
+        {CATEGORIES.map((category) => {
+          const categoryItems = groupedItems[category] || [];
+          if (categoryItems.length === 0) return null;
 
-      {/* Memories List */}
-      <div className="space-y-3">
-        {memories.isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : filteredMemories.length > 0 ? (
-          filteredMemories.map((memory: any) => (
-            <div
-              key={memory.id}
-              className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-4 shadow-lg hover:shadow-xl transition-all group"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">{memory.key}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{memory.value}</p>
-                </div>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                  <button
-                    onClick={() =>
-                      updateMemory.mutate({
-                        id: memory.id,
-                        isEnabled: !memory.isEnabled,
-                      })
-                    }
-                    className={`p-2 rounded transition-colors ${
-                      memory.isEnabled
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-red-500/20 text-red-400"
+          return (
+            <div key={category}>
+              <h2 className="text-xl font-semibold text-foreground mb-4">{category}</h2>
+              <div className="space-y-3">
+                {categoryItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`backdrop-blur-xl border rounded-lg p-4 shadow-lg card transition-opacity ${
+                      item.enabled
+                        ? "bg-white/10 border-white/20"
+                        : "bg-white/5 border-white/10 opacity-50"
                     }`}
                   >
-                    <ToggleRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => deleteMemory.mutate({ id: memory.id })}
-                    className="p-2 rounded hover:bg-red-500/20"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
-                </div>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground">{item.key}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{item.value}</p>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => editItem(item)}
+                          className="p-1 hover:bg-blue-500/20 rounded transition-colors"
+                        >
+                          <Edit2 className="w-4 h-4 text-blue-400" />
+                        </button>
+                        <button
+                          onClick={() => deleteItem(item.id)}
+                          className="p-1 hover:bg-red-500/20 rounded transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                        </button>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => toggleEnabled(item.id)}
+                      className={`text-xs px-2 py-1 rounded transition-colors ${
+                        item.enabled
+                          ? "bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                          : "bg-gray-500/20 text-gray-400 hover:bg-gray-500/30"
+                      }`}
+                    >
+                      {item.enabled ? "Enabled" : "Disabled"}
+                    </button>
+                  </div>
+                ))}
               </div>
-              {!memory.isEnabled && (
-                <p className="text-xs text-yellow-400 mt-2">This memory is currently disabled</p>
-              )}
             </div>
-          ))
-        ) : (
-          <p className="text-center py-12 text-muted-foreground backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg">
-            No memories of this type yet. Add one to get started!
-          </p>
-        )}
+          );
+        })}
       </div>
+
+      {items.length === 0 && (
+        <p className="text-center text-muted-foreground py-12">
+          No memories saved yet. Add one to get started!
+        </p>
+      )}
     </div>
   );
 }

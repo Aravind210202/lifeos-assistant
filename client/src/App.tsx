@@ -11,7 +11,7 @@ import Finance from "./pages/Finance";
 import Goals from "./pages/Goals";
 import JobApplications from "./pages/JobApplications";
 import Memory from "./pages/Memory";
-import Home from "./pages/Home";
+
 import AIAssistant from "./pages/AIAssistant";
 import NotFound from "./pages/NotFound";
 
