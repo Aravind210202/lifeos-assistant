@@ -1,83 +1,109 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, Trash2, ExternalLink } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useState, useMemo } from "react";
+import { Plus, Trash2, ExternalLink } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const PIPELINE_STAGES = ["Saved", "Applying", "Applied", "Interview", "Offer", "Rejected"] as const;
 
+interface JobApplication {
+  id: string;
+  company: string;
+  role: string;
+  location: string;
+  jobLink: string;
+  status: typeof PIPELINE_STAGES[number];
+  dateApplied: string;
+}
+
+function getApplications(): JobApplication[] {
+  const stored = localStorage.getItem("lifeos_job_applications");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveApplications(apps: JobApplication[]) {
+  localStorage.setItem("lifeos_job_applications", JSON.stringify(apps));
+}
+
 export default function JobApplications() {
-  const { user, loading } = useAuth();
+  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     company: "",
     role: "",
     location: "",
-    link: "",
-    status: "Saved" as const,
+    jobLink: "",
+    status: "Saved" as typeof PIPELINE_STAGES[number],
   });
 
-  const applications = trpc.jobApplications.list.useQuery(undefined, { enabled: !!user });
-  const createApplication = trpc.jobApplications.create.useMutation({
-    onSuccess: () => {
-      applications.refetch();
-      setShowForm(false);
-      setFormData({
-        company: "",
-        role: "",
-        location: "",
-        link: "",
-        status: "Saved" as const,
-      });
-      toast.success("Job application added!");
-    },
-    onError: () => {
-      toast.error("Failed to add application");
-    },
-  });
-  const updateApplication = trpc.jobApplications.update.useMutation({
-    onSuccess: () => {
-      applications.refetch();
-      toast.success("Application updated!");
-    },
-  });
-  const deleteApplication = trpc.jobApplications.delete.useMutation({
-    onSuccess: () => {
-      applications.refetch();
-      toast.success("Application deleted!");
-    },
-  });
+  useEffect(() => {
+    setApplications(getApplications());
+  }, []);
+
+  const addApplication = () => {
+    if (!formData.company.trim() || !formData.role.trim()) {
+      toast.error("Please fill company and role");
+      return;
+    }
+
+    const newApp: JobApplication = {
+      id: Date.now().toString(),
+      company: formData.company,
+      role: formData.role,
+      location: formData.location,
+      jobLink: formData.jobLink,
+      status: formData.status,
+      dateApplied: new Date().toISOString().split("T")[0],
+    };
+
+    const updated = [...applications, newApp];
+    setApplications(updated);
+    saveApplications(updated);
+    setShowForm(false);
+    setFormData({
+      company: "",
+      role: "",
+      location: "",
+      jobLink: "",
+      status: "Saved",
+    });
+    toast.success("Job application added!");
+  };
+
+  const updateApplicationStatus = (id: string, newStatus: typeof PIPELINE_STAGES[number]) => {
+    const updated = applications.map((app) =>
+      app.id === id ? { ...app, status: newStatus } : app
+    );
+    setApplications(updated);
+    saveApplications(updated);
+    toast.success("Application updated!");
+  };
+
+  const deleteApplication = (id: string) => {
+    const updated = applications.filter((app) => app.id !== id);
+    setApplications(updated);
+    saveApplications(updated);
+    toast.success("Application deleted!");
+  };
 
   // Group applications by status
   const applicationsByStatus = useMemo(() => {
-    if (!applications.data) return {};
-
-    const grouped: Record<string, any[]> = {};
+    const grouped: Record<string, JobApplication[]> = {};
     PIPELINE_STAGES.forEach((stage) => {
       grouped[stage] = [];
     });
 
-    applications.data.forEach((app: any) => {
+    applications.forEach((app) => {
       if (grouped[app.status]) {
         grouped[app.status].push(app);
       }
     });
 
     return grouped;
-  }, [applications.data]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  }, [applications]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8 page">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">Job Applications</h1>
@@ -133,8 +159,8 @@ export default function JobApplications() {
               <input
                 type="url"
                 placeholder="https://..."
-                value={formData.link}
-                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                value={formData.jobLink}
+                onChange={(e) => setFormData({ ...formData, jobLink: e.target.value })}
                 className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
@@ -156,25 +182,7 @@ export default function JobApplications() {
               <Button variant="outline" onClick={() => setShowForm(false)}>
                 Cancel
               </Button>
-              <Button
-                onClick={() => {
-                  if (!formData.company.trim() || !formData.role.trim()) {
-                    toast.error("Please fill company and role");
-                    return;
-                  }
-                  createApplication.mutate({
-                    company: formData.company,
-                    role: formData.role,
-                    location: formData.location || undefined,
-                    jobLink: formData.link || undefined,
-                    status: formData.status,
-                    dateApplied: new Date(),
-                  });
-                }}
-                disabled={createApplication.isPending}
-              >
-                {createApplication.isPending ? "Adding..." : "Add"}
-              </Button>
+              <Button onClick={addApplication}>Add</Button>
             </div>
           </div>
         </DialogContent>
@@ -192,10 +200,10 @@ export default function JobApplications() {
             </div>
 
             <div className="space-y-3 flex-1">
-              {(applicationsByStatus[stage] || []).map((app: any) => (
+              {(applicationsByStatus[stage] || []).map((app) => (
                 <div
                   key={app.id}
-                  className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-3 shadow-lg hover:shadow-xl transition-all group"
+                  className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-3 shadow-lg hover:shadow-xl transition-all group card"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
@@ -203,7 +211,7 @@ export default function JobApplications() {
                       <p className="text-xs text-muted-foreground truncate">{app.role}</p>
                     </div>
                     <button
-                      onClick={() => deleteApplication.mutate({ id: app.id })}
+                      onClick={() => deleteApplication(app.id)}
                       className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                     >
                       <Trash2 className="w-3 h-3 text-red-500" />
@@ -223,19 +231,16 @@ export default function JobApplications() {
                         onClick={() => {
                           const currentIndex = PIPELINE_STAGES.indexOf(stage);
                           if (currentIndex < PIPELINE_STAGES.length - 1) {
-                            updateApplication.mutate({
-                              id: app.id,
-                              status: PIPELINE_STAGES[currentIndex + 1],
-                            });
+                            updateApplicationStatus(app.id, PIPELINE_STAGES[currentIndex + 1]);
                           }
                         }}
                       >
                         Move →
                       </Button>
                     )}
-                    {app.link && (
+                    {app.jobLink && (
                       <a
-                        href={app.link}
+                        href={app.jobLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-shrink-0"

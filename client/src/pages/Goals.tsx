@@ -1,79 +1,145 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, Trash2, Edit2 } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useState } from "react";
+import { Plus, Trash2, Edit2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+const CATEGORIES = ["University", "Career", "Fitness", "Finance", "Personal"];
+
+interface Goal {
+  id: string;
+  title: string;
+  category: string;
+  whyItMatters: string;
+  progress: number;
+  nextAction: string;
+  deadline: string;
+  status: "active" | "completed" | "paused";
+}
+
+function getGoals(): Goal[] {
+  const stored = localStorage.getItem("lifeos_goals");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveGoals(goals: Goal[]) {
+  localStorage.setItem("lifeos_goals", JSON.stringify(goals));
+}
+
 export default function Goals() {
-  const { user, loading } = useAuth();
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
-    category: "Personal" as const,
+    category: "Personal",
+    whyItMatters: "",
     progress: 0,
-    deadline: new Date().toISOString().split("T")[0],
+    nextAction: "",
+    deadline: "",
+    status: "active" as "active" | "completed" | "paused",
   });
 
-  const goals = trpc.goals.list.useQuery(undefined, { enabled: !!user });
-  const createGoal = trpc.goals.create.useMutation({
-    onSuccess: () => {
-      goals.refetch();
-      setShowForm(false);
-      setFormData({
-        title: "",
-        description: "",
-        category: "Personal" as const,
-        progress: 0,
-        deadline: new Date().toISOString().split("T")[0],
-      });
-      toast.success("Goal created!");
-    },
-    onError: () => {
-      toast.error("Failed to create goal");
-    },
-  });
-  const updateGoal = trpc.goals.update.useMutation({
-    onSuccess: () => {
-      goals.refetch();
+  useEffect(() => {
+    setGoals(getGoals());
+  }, []);
+
+  const addOrUpdateGoal = () => {
+    if (!formData.title.trim()) {
+      toast.error("Please enter a goal title");
+      return;
+    }
+
+    if (editingId) {
+      const updated = goals.map((g) =>
+        g.id === editingId
+          ? { ...g, ...formData }
+          : g
+      );
+      setGoals(updated);
+      saveGoals(updated);
       toast.success("Goal updated!");
-    },
-  });
-  const deleteGoal = trpc.goals.delete.useMutation({
-    onSuccess: () => {
-      goals.refetch();
-      toast.success("Goal deleted!");
-    },
-  });
+    } else {
+      const newGoal: Goal = {
+        id: Date.now().toString(),
+        ...formData,
+      };
+      const updated = [...goals, newGoal];
+      setGoals(updated);
+      saveGoals(updated);
+      toast.success("Goal added!");
+    }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({
+      title: "",
+      category: "Personal",
+      whyItMatters: "",
+      progress: 0,
+      nextAction: "",
+      deadline: "",
+      status: "active",
+    });
+  };
+
+  const deleteGoal = (id: string) => {
+    const updated = goals.filter((g) => g.id !== id);
+    setGoals(updated);
+    saveGoals(updated);
+    toast.success("Goal deleted!");
+  };
+
+  const editGoal = (goal: Goal) => {
+    setFormData({
+      title: goal.title,
+      category: goal.category,
+      whyItMatters: goal.whyItMatters,
+      progress: goal.progress,
+      nextAction: goal.nextAction,
+      deadline: goal.deadline,
+      status: goal.status,
+    });
+    setEditingId(goal.id);
+    setShowForm(true);
+  };
+
+  const activeGoals = goals.filter((g) => g.status === "active");
+  const completedGoals = goals.filter((g) => g.status === "completed");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8 page">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">Goals</h1>
-          <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Button
+            onClick={() => {
+              setEditingId(null);
+              setFormData({
+                title: "",
+                category: "Personal",
+                whyItMatters: "",
+                progress: 0,
+                nextAction: "",
+                deadline: "",
+                status: "active",
+              });
+              setShowForm(true);
+            }}
+            className="gap-2"
+          >
             <Plus className="w-4 h-4" />
-            New Goal
+            Add Goal
           </Button>
         </div>
-        <p className="text-muted-foreground">Track your personal, career, and fitness goals</p>
+        <p className="text-muted-foreground">Track your goals across all areas of life</p>
       </div>
 
-      {/* Create Goal Dialog */}
+      {/* Add/Edit Goal Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20">
+        <DialogContent className="backdrop-blur-xl bg-black/80 border border-white/20 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create New Goal</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Goal" : "Add Goal"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -86,30 +152,65 @@ export default function Goals() {
                 className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-            <div>
-              <label className="text-sm font-medium text-foreground mb-1 block">Description</label>
-              <textarea
-                placeholder="Why does this goal matter to you?"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                rows={3}
-              />
-            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-foreground mb-1 block">Category</label>
                 <select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <option value="University">University</option>
-                  <option value="Career">Career</option>
-                  <option value="Fitness">Fitness</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Personal">Personal</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
                 </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1 block">Status</label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <option value="active">Active</option>
+                  <option value="paused">Paused</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-1 block">Why It Matters</label>
+              <textarea
+                placeholder="Why is this goal important?"
+                value={formData.whyItMatters}
+                onChange={(e) => setFormData({ ...formData, whyItMatters: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                rows={3}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-1 block">Next Action</label>
+              <input
+                type="text"
+                placeholder="What's the next step?"
+                value={formData.nextAction}
+                onChange={(e) => setFormData({ ...formData, nextAction: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1 block">Progress (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formData.progress}
+                  onChange={(e) => setFormData({ ...formData, progress: parseInt(e.target.value) || 0 })}
+                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground mb-1 block">Deadline</label>
@@ -122,112 +223,110 @@ export default function Goals() {
               </div>
             </div>
             <div className="flex gap-2 justify-end pt-4">
-              <Button variant="outline" onClick={() => setShowForm(false)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingId(null);
+                }}
+              >
                 Cancel
               </Button>
-              <Button
-                onClick={() => {
-                  if (!formData.title.trim()) {
-                    toast.error("Please enter a title");
-                    return;
-                  }
-                  createGoal.mutate({
-                    title: formData.title,
-                    whyItMatters: formData.description || undefined,
-                    category: formData.category,
-                    progress: 0,
-                    deadline: new Date(formData.deadline),
-                  });
-                }}
-                disabled={createGoal.isPending}
-              >
-                {createGoal.isPending ? "Creating..." : "Create"}
-              </Button>
+              <Button onClick={addOrUpdateGoal}>{editingId ? "Update" : "Add"}</Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Goals Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {goals.isLoading ? (
-          <div className="flex justify-center py-12 col-span-full">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : goals.data && goals.data.length > 0 ? (
-          goals.data.map((goal: any) => (
-            <div
-              key={goal.id}
-              className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-4 shadow-lg hover:shadow-xl transition-all group"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="font-bold text-foreground flex-1">{goal.title}</h3>
+      {/* Active Goals */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-foreground mb-4">Active Goals</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {activeGoals.length === 0 ? (
+            <p className="text-muted-foreground col-span-full text-center py-8">No active goals yet</p>
+          ) : (
+            activeGoals.map((goal) => (
+              <div key={goal.id} className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-lg card">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-foreground">{goal.title}</h3>
+                    <p className="text-xs text-muted-foreground">{goal.category}</p>
+                  </div>
+                  <button
+                    onClick={() => editGoal(goal)}
+                    className="p-1 hover:bg-blue-500/20 rounded transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4 text-blue-400" />
+                  </button>
+                </div>
+
+                {goal.whyItMatters && (
+                  <p className="text-sm text-muted-foreground mb-3">{goal.whyItMatters}</p>
+                )}
+
+                <div className="mb-3">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span className="text-foreground font-medium">{goal.progress}%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
+                      style={{ width: `${goal.progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {goal.nextAction && (
+                  <p className="text-xs text-muted-foreground mb-3">
+                    <span className="font-medium">Next:</span> {goal.nextAction}
+                  </p>
+                )}
+
+                {goal.deadline && (
+                  <p className="text-xs text-muted-foreground mb-3">
+                    <span className="font-medium">Deadline:</span> {goal.deadline}
+                  </p>
+                )}
+
+                <div className="flex gap-2 pt-3">
+                  <button
+                    onClick={() => deleteGoal(goal.id)}
+                    className="flex-1 px-3 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Completed Goals */}
+      {completedGoals.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-foreground mb-4">Completed Goals</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {completedGoals.map((goal) => (
+              <div key={goal.id} className="backdrop-blur-xl bg-white/10 border border-green-500/30 rounded-lg p-6 shadow-lg card opacity-75">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-green-400 line-through">{goal.title}</h3>
+                    <p className="text-xs text-muted-foreground">{goal.category}</p>
+                  </div>
+                </div>
                 <button
-                  onClick={() => deleteGoal.mutate({ id: goal.id })}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => deleteGoal(goal.id)}
+                  className="w-full px-3 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
                 >
-                  <Trash2 className="w-4 h-4 text-red-500" />
+                  Delete
                 </button>
               </div>
-
-              {goal.description && (
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{goal.description}</p>
-              )}
-
-              <div className="mb-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-muted-foreground">Progress</span>
-                  <span className="text-xs font-semibold text-primary">{goal.progress}%</span>
-                </div>
-                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-300"
-                    style={{ width: `${goal.progress}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">
-                  {goal.category}
-                </span>
-                <span className="text-xs bg-white/10 text-muted-foreground px-2 py-1 rounded">
-                  {goal.deadline ? new Date(goal.deadline).toLocaleDateString() : "No deadline"}
-                </span>
-              </div>
-
-              <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    const newProgress = Math.min(goal.progress + 10, 100);
-                    updateGoal.mutate({ id: goal.id, progress: newProgress });
-                  }}
-                >
-                  +10%
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    const newProgress = Math.max(goal.progress - 10, 0);
-                    updateGoal.mutate({ id: goal.id, progress: newProgress });
-                  }}
-                >
-                  -10%
-                </Button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center py-12 text-muted-foreground col-span-full">
-            No goals yet. Create one to get started!
-          </p>
-        )}
-      </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
