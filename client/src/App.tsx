@@ -24,10 +24,10 @@ function Router() {
       <Route path="/finance" component={Finance} />
       <Route path="/goals" component={Goals} />
       <Route path="/jobs" component={JobApplications} />
-      <Route path={"\\"} component={Home} />
-      <Route path={"/ai-assistant"} component={AIAssistant} />
-      <Route path={"/404"} component={NotFound} />
-      <Route component={NotFound} />
+      <Route path="/memory" component={Memory} />
+      <Route path="/ai-assistant" component={AIAssistant} />
+      <Route path="/404" component={NotFound} />
+      <Route component={Dashboard} />
     </Switch>
   );
 }

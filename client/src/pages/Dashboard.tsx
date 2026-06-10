@@ -1,222 +1,312 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Plus, TrendingUp, AlertCircle, Target, Briefcase, CheckCircle2 } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, CheckCircle2, AlertCircle, TrendingUp, Target, Briefcase } from "lucide-react";
+import { toast } from "sonner";
+import { getReminders, addReminder, getTransactions, getGoals, getJobApplications, Reminder, Transaction, Goal, JobApplication } from "@/lib/localStorage";
 
 export default function Dashboard() {
-  const { user, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [todayReminders, setTodayReminders] = useState<Reminder[]>([]);
+  const [overdueReminders, setOverdueReminders] = useState<Reminder[]>([]);
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
+  const [jobFollowUps, setJobFollowUps] = useState<JobApplication[]>([]);
+  const [showAddReminder, setShowAddReminder] = useState(false);
+  const [reminderForm, setReminderForm] = useState({
+    title: "",
+    description: "",
+    category: "Personal" as const,
+    priority: "medium" as const,
+  });
 
-  // Fetch data
-  const todayReminders = trpc.reminders.today.useQuery(undefined, { enabled: !!user });
-  const overdueReminders = trpc.reminders.overdue.useQuery(undefined, { enabled: !!user });
-  const activeGoals = trpc.goals.active.useQuery(undefined, { enabled: !!user });
-  const upcomingFollowUps = trpc.jobApplications.upcomingFollowUps.useQuery(undefined, { enabled: !!user });
+  useEffect(() => {
+    loadDashboardData();
+    // Reload data every time the page is focused
+    const handleFocus = () => loadDashboardData();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+  const loadDashboardData = () => {
+    // Load today's reminders
+    const allReminders = getReminders();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const today_reminders = allReminders.filter(r => {
+      if (!r.dueDate || r.isCompleted) return false;
+      const dueDate = new Date(r.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate.getTime() === today.getTime();
+    });
+    
+    const overdue = allReminders.filter(r => {
+      if (!r.dueDate || r.isCompleted) return false;
+      const dueDate = new Date(r.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate.getTime() < today.getTime();
+    });
+
+    setTodayReminders(today_reminders);
+    setOverdueReminders(overdue);
+
+    // Load spending
+    const transactions = getTransactions();
+    const thisMonth = new Date();
+    const monthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+    const monthEnd = new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
+    
+    const monthlySpent = transactions
+      .filter(t => {
+        const tDate = new Date(t.date);
+        return t.type === "expense" && tDate >= monthStart && tDate <= monthEnd;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    setTotalSpent(monthlySpent);
+
+    // Load active goals
+    const goals = getGoals();
+    setActiveGoals(goals.filter(g => g.status === "active").slice(0, 3));
+
+    // Load job follow-ups
+    const jobs = getJobApplications();
+    const upcoming = jobs.filter(j => j.followUpDate && new Date(j.followUpDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
+    setJobFollowUps(upcoming.slice(0, 3));
+  };
+
+  const handleAddReminder = () => {
+    if (!reminderForm.title.trim()) {
+      toast.error("Please enter a reminder title");
+      return;
+    }
+
+    addReminder({
+      title: reminderForm.title,
+      description: reminderForm.description,
+      category: reminderForm.category as any,
+      priority: reminderForm.priority as any,
+      isRecurring: false,
+      isCompleted: false,
+    });
+
+    toast.success("Reminder added!");
+    setReminderForm({ title: "", description: "", category: "Personal", priority: "medium" });
+    setShowAddReminder(false);
+    loadDashboardData();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 p-4 md:p-8">
       {/* Header */}
-      <div className="mb-8 animate-slide-in-down">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Welcome back, {user?.name || "User"}
-        </h1>
-        <p className="text-muted-foreground">Your personal productivity hub</p>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back to your LifeOS assistant</p>
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         {/* Today's Reminders */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-scale-in" style={{ animationDelay: "0.1s" }}>
-          <div className="flex items-start justify-between">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Today's Tasks</p>
-              <p className="text-3xl font-bold text-foreground">
-                {todayReminders.data?.length || 0}
-              </p>
+              <p className="text-sm text-muted-foreground mb-1">Today's Reminders</p>
+              <p className="text-3xl font-bold text-foreground">{todayReminders.length}</p>
             </div>
-            <CheckCircle2 className="w-8 h-8 text-primary/60" />
+            <CheckCircle2 className="w-8 h-8 text-primary/50" />
           </div>
-        </div>
+        </Card>
 
-        {/* Overdue Items */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-scale-in border-red-500/20 bg-red-500/5" style={{ animationDelay: "0.2s" }}>
-          <div className="flex items-start justify-between">
+        {/* Overdue */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground mb-1">Overdue</p>
-              <p className="text-3xl font-bold text-red-500">
-                {overdueReminders.data?.length || 0}
-              </p>
+              <p className="text-sm text-muted-foreground mb-1">Overdue Items</p>
+              <p className="text-3xl font-bold text-red-400">{overdueReminders.length}</p>
             </div>
-            <AlertCircle className="w-8 h-8 text-red-500/60" />
+            <AlertCircle className="w-8 h-8 text-red-400/50" />
           </div>
-        </div>
+        </Card>
+
+        {/* Monthly Spending */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">This Month Spent</p>
+              <p className="text-3xl font-bold text-foreground">${totalSpent.toFixed(2)}</p>
+            </div>
+            <TrendingUp className="w-8 h-8 text-primary/50" />
+          </div>
+        </Card>
 
         {/* Active Goals */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-scale-in" style={{ animationDelay: "0.3s" }}>
-          <div className="flex items-start justify-between">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Active Goals</p>
-              <p className="text-3xl font-bold text-foreground">
-                {activeGoals.data?.length || 0}
-              </p>
+              <p className="text-3xl font-bold text-foreground">{activeGoals.length}</p>
             </div>
-            <Target className="w-8 h-8 text-primary/60" />
+            <Target className="w-8 h-8 text-primary/50" />
           </div>
-        </div>
-
-        {/* Job Follow-ups */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-scale-in" style={{ animationDelay: "0.4s" }}>
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Job Follow-ups</p>
-              <p className="text-3xl font-bold text-foreground">
-                {upcomingFollowUps.data?.length || 0}
-              </p>
-            </div>
-            <Briefcase className="w-8 h-8 text-primary/60" />
-          </div>
-        </div>
+        </Card>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Reminders & Tasks */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Today's Reminders */}
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-slide-in-up">
+        {/* Today's Reminders Section */}
+        <div className="lg:col-span-2">
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-foreground">Today's Tasks</h2>
-              <Button size="sm" variant="outline" className="gap-2">
+              <h2 className="text-xl font-semibold text-foreground">Today's Reminders</h2>
+              <Button
+                size="sm"
+                onClick={() => setShowAddReminder(true)}
+                className="gap-2"
+              >
                 <Plus className="w-4 h-4" />
                 Add
               </Button>
             </div>
 
-            {todayReminders.isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              </div>
-            ) : todayReminders.data && todayReminders.data.length > 0 ? (
+            {todayReminders.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">No reminders for today</p>
+            ) : (
               <div className="space-y-2">
-                {todayReminders.data.map((reminder, idx) => (
+                {todayReminders.map(reminder => (
                   <div
                     key={reminder.id}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors animate-slide-in-up"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    className="p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
                   >
-                    <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{reminder.title}</p>
-                      <p className="text-xs text-muted-foreground">{reminder.category}</p>
-                    </div>
-                    <div className={`text-xs px-2 py-1 rounded-full ${
-                      reminder.priority === "high" ? "bg-red-500/20 text-red-400" :
-                      reminder.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
-                      "bg-green-500/20 text-green-400"
-                    }`}>
-                      {reminder.priority}
+                    <p className="font-medium text-foreground">{reminder.title}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary">
+                        {reminder.category}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        reminder.priority === "high" ? "bg-red-500/20 text-red-400" :
+                        reminder.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
+                        "bg-blue-500/20 text-blue-400"
+                      }`}>
+                        {reminder.priority}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-center py-8 text-muted-foreground">No tasks today - great job!</p>
             )}
-          </div>
-
-          {/* Overdue Reminders */}
-          {overdueReminders.data && overdueReminders.data.length > 0 && (
-            <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 border-red-500/20 bg-red-500/5 animate-slide-in-up">
-              <div className="flex items-center gap-2 mb-4">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-                <h2 className="text-xl font-bold text-red-500">Overdue Items</h2>
-              </div>
-              <div className="space-y-2">
-                {overdueReminders.data.map((reminder) => (
-                  <div key={reminder.id} className="flex items-center gap-3 p-3 rounded-lg bg-red-500/10">
-                    <div className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{reminder.title}</p>
-                      <p className="text-xs text-muted-foreground">{reminder.category}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          </Card>
         </div>
 
-        {/* Right Column - Goals & Jobs */}
-        <div className="space-y-6">
-          {/* Active Goals */}
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-slide-in-up">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-foreground">Goals</h2>
-              <Target className="w-5 h-5 text-primary/60" />
-            </div>
-
-            {activeGoals.isLoading ? (
-              <div className="flex justify-center py-6">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              </div>
-            ) : activeGoals.data && activeGoals.data.length > 0 ? (
-              <div className="space-y-3">
-                {activeGoals.data.slice(0, 3).map((goal) => (
-                  <div key={goal.id} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-foreground truncate">{goal.title}</p>
-                      <span className="text-xs text-muted-foreground">{goal.progress}%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all duration-500"
-                        style={{ width: `${goal.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Overdue Section */}
+        <div>
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Overdue Items</h2>
+            {overdueReminders.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">All caught up!</p>
             ) : (
-              <p className="text-center py-6 text-muted-foreground text-sm">No active goals</p>
-            )}
-          </div>
-
-          {/* Job Follow-ups */}
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-slide-in-up">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-foreground">Follow-ups</h2>
-              <Briefcase className="w-5 h-5 text-primary/60" />
-            </div>
-
-            {upcomingFollowUps.isLoading ? (
-              <div className="flex justify-center py-6">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              </div>
-            ) : upcomingFollowUps.data && upcomingFollowUps.data.length > 0 ? (
               <div className="space-y-2">
-                {upcomingFollowUps.data.slice(0, 3).map((job) => (
-                  <div key={job.id} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-                    <p className="text-sm font-medium text-foreground truncate">{job.company}</p>
-                    <p className="text-xs text-muted-foreground">{job.role}</p>
+                {overdueReminders.map(reminder => (
+                  <div
+                    key={reminder.id}
+                    className="p-3 rounded-lg bg-red-500/10 border border-red-500/20"
+                  >
+                    <p className="font-medium text-red-400 text-sm">{reminder.title}</p>
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="text-center py-6 text-muted-foreground text-sm">No follow-ups</p>
             )}
-          </div>
+          </Card>
         </div>
       </div>
+
+      {/* Active Goals */}
+      {activeGoals.length > 0 && (
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 mt-6">
+          <h2 className="text-xl font-semibold text-foreground mb-4">Active Goals</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {activeGoals.map(goal => (
+              <div key={goal.id} className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="font-medium text-foreground mb-2">{goal.title}</p>
+                <div className="w-full bg-white/10 rounded-full h-2 mb-2">
+                  <div
+                    className="bg-gradient-to-r from-primary to-blue-500 h-2 rounded-full transition-all"
+                    style={{ width: `${goal.progress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">{goal.progress}% Complete</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Add Reminder Dialog */}
+      <Dialog open={showAddReminder} onOpenChange={setShowAddReminder}>
+        <DialogContent className="backdrop-blur-xl bg-black/80 border-white/20">
+          <DialogHeader>
+            <DialogTitle>Add Reminder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">Title</label>
+              <Input
+                value={reminderForm.title}
+                onChange={(e) => setReminderForm({ ...reminderForm, title: e.target.value })}
+                placeholder="Enter reminder title"
+                className="bg-white/10 border-white/20"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground mb-2 block">Description</label>
+              <Textarea
+                value={reminderForm.description}
+                onChange={(e) => setReminderForm({ ...reminderForm, description: e.target.value })}
+                placeholder="Optional description"
+                className="bg-white/10 border-white/20"
+                rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Category</label>
+                <Select value={reminderForm.category} onValueChange={(value) => setReminderForm({ ...reminderForm, category: value as any })}>
+                  <SelectTrigger className="bg-white/10 border-white/20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="University">University</SelectItem>
+                    <SelectItem value="Career">Career</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Health">Health</SelectItem>
+                    <SelectItem value="Personal">Personal</SelectItem>
+                    <SelectItem value="Life Admin">Life Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Priority</label>
+                <Select value={reminderForm.priority} onValueChange={(value) => setReminderForm({ ...reminderForm, priority: value as any })}>
+                  <SelectTrigger className="bg-white/10 border-white/20">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <Button onClick={handleAddReminder} className="w-full">
+              Add Reminder
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
