@@ -10,6 +10,7 @@ import {
 } from "@/lib/notificationService";
 import { triggerDailyReminder, triggerBudgetCheck } from "@/lib/notificationScheduler";
 import { collectAllData, downloadCSV } from "@/lib/sheetsExport";
+import { downloadExcelFile } from "@/lib/excelExport";
 
 export default function Settings() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -58,6 +59,16 @@ export default function Settings() {
     } catch (error) {
       toast.error("Failed to export data");
       console.error(error);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      await downloadExcelFile();
+      toast.success("Data exported as Excel!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to export Excel");
     }
   };
 
@@ -206,14 +217,26 @@ export default function Settings() {
                 Save Settings
               </Button>
 
-              <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4 mt-4">
-                <p className="text-xs text-purple-300">
-                  <strong>Google Sheets Export:</strong> Set up with your email{" "}
-                  <span className="text-purple-200">varavindsrivatsan@gmail.com</span>
-                </p>
-                <p className="text-xs text-purple-300/70 mt-2">
-                  Coming soon - will automatically sync your data to a shared Google Sheet
-                </p>
+              <div className="space-y-3 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Button onClick={handleExportCSV} className="w-full" variant="outline">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export as CSV
+                  </Button>
+                  <Button onClick={handleExportExcel} className="w-full" variant="outline">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export as Excel
+                  </Button>
+                </div>
+                <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
+                  <p className="text-xs text-purple-300">
+                    <strong>Google Sheets Export:</strong> Set up with your email{" "}
+                    <span className="text-purple-200">varavindsrivatsan@gmail.com</span>
+                  </p>
+                  <p className="text-xs text-purple-300/70 mt-2">
+                    Coming soon - will automatically sync your data to a shared Google Sheet
+                  </p>
+                </div>
               </div>
             </div>
           </div>
