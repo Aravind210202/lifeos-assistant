@@ -255,7 +255,7 @@ export function deleteGoal(id: string): boolean {
 }
 
 // Job Applications Store
-const JOBS_KEY = "lifeos_jobs";
+const JOBS_KEY = "lifeos_job_applications";
 
 export function getJobApplications(): JobApplication[] {
   try {

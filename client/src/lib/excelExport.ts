@@ -291,7 +291,7 @@ export async function downloadExcelFile() {
   const notes = JSON.parse(localStorage.getItem('lifeos_notes') || '[]');
   const transactions = JSON.parse(localStorage.getItem('lifeos_transactions') || '[]');
   const goals = JSON.parse(localStorage.getItem('lifeos_goals') || '[]');
-  const jobApplications = JSON.parse(localStorage.getItem('lifeos_jobs') || '[]');
+  const jobApplications = JSON.parse(localStorage.getItem('lifeos_job_applications') || '[]');
   const memory = JSON.parse(localStorage.getItem('lifeos_memory') || '[]');
 
   const data: ExcelExportData = {

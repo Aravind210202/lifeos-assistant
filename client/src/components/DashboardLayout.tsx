@@ -10,7 +10,7 @@ const menuItems = [
   { icon: FileText, label: "Notes", path: "/notes" },
   { icon: BarChart3, label: "Finance", path: "/finance" },
   { icon: Target, label: "Goals", path: "/goals" },
-  { icon: Briefcase, label: "Job Applications", path: "/job-applications" },
+        { icon: Briefcase, label: "Job Applications", path: "/jobs" },
   { icon: Brain, label: "Personal Memory", path: "/memory" },
   { icon: Zap, label: "AI Assistant", path: "/ai-assistant" },
   { icon: Settings, label: "Settings", path: "/settings" },
