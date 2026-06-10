@@ -7,8 +7,8 @@ import {
   requestNotificationPermission,
   getNotificationSettings,
   saveNotificationSettings,
-  checkBudgetAlerts,
 } from "@/lib/notificationService";
+import { triggerDailyReminder, triggerBudgetCheck } from "@/lib/notificationScheduler";
 import { collectAllData, downloadCSV } from "@/lib/sheetsExport";
 
 export default function Settings() {
@@ -62,20 +62,19 @@ export default function Settings() {
   };
 
   const handleTestBudgetAlert = () => {
-    const transactions = JSON.parse(localStorage.getItem("lifeos_transactions") || "[]");
-    const budgets = JSON.parse(localStorage.getItem("lifeos_budgets") || "{}");
+    if (notificationPermission !== "granted") {
+      toast.error("Please enable notifications first");
+      return;
+    }
 
+    const budgets = JSON.parse(localStorage.getItem("lifeos_budgets") || "{}");
     if (Object.keys(budgets).length === 0) {
       toast.error("No budgets set. Please set category budgets in Finance module.");
       return;
     }
 
-    const alerts = checkBudgetAlerts(transactions, budgets, budgetThreshold / 100);
-    if (alerts.length > 0) {
-      toast.success(`${alerts.length} budget alert(s) triggered!`);
-    } else {
-      toast.info("No budget alerts at current threshold");
-    }
+    triggerBudgetCheck();
+    toast.success("Budget check triggered! Check notifications.");
   };
 
   const handleTestDailyReminder = () => {
@@ -84,29 +83,7 @@ export default function Settings() {
       return;
     }
 
-    const reminders = JSON.parse(localStorage.getItem("lifeos_reminders") || "[]");
-    const today = new Date().toDateString();
-    const todayReminders = reminders.filter(
-      (r: any) => new Date(r.dueDate).toDateString() === today && !r.completed
-    );
-
-    if (todayReminders.length === 0) {
-      new Notification("📋 Good Morning!", {
-        body: "No reminders for today - have a great day!",
-        icon: "✅",
-      });
-    } else {
-      const reminderList = todayReminders
-        .slice(0, 3)
-        .map((r: any) => `• ${r.title} (${r.priority})`)
-        .join("\n");
-
-      new Notification(`📋 Good Morning! ${todayReminders.length} reminder(s) for today`, {
-        body: `${reminderList}${todayReminders.length > 3 ? `\n... and ${todayReminders.length - 3} more` : ""}`,
-        icon: "✅",
-      });
-    }
-
+    triggerDailyReminder();
     toast.success("Test notification sent!");
   };
 

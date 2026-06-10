@@ -4,6 +4,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import DashboardLayout from "./components/DashboardLayout";
+import { useEffect } from "react";
+import { startNotificationScheduler } from "./lib/notificationScheduler";
 import Dashboard from "./pages/Dashboard";
 import Reminders from "./pages/Reminders";
 import Notes from "./pages/Notes";
@@ -16,6 +18,10 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 function Router() {
+  useEffect(() => {
+    startNotificationScheduler();
+  }, []);
+
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
