@@ -11,8 +11,8 @@ import Finance from "./pages/Finance";
 import Goals from "./pages/Goals";
 import JobApplications from "./pages/JobApplications";
 import Memory from "./pages/Memory";
-
 import AIAssistant from "./pages/AIAssistant";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 function Router() {
@@ -26,8 +26,10 @@ function Router() {
       <Route path="/jobs" component={JobApplications} />
       <Route path="/memory" component={Memory} />
       <Route path="/ai-assistant" component={AIAssistant} />
+      <Route path="/settings" component={Settings} />
       <Route path="/404" component={NotFound} />
-      <Route component={Dashboard} />
+      {/* Final fallback route */}
+      <Route component={NotFound} />
     </Switch>
   );
 }

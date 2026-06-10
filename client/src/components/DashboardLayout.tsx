@@ -1,5 +1,5 @@
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, BarChart3, FileText, Target, Briefcase, Brain, Zap, Menu, X } from "lucide-react";
+import { LayoutDashboard, BarChart3, FileText, Target, Briefcase, Brain, Zap, Menu, X, Settings } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "./ui/button";
@@ -13,6 +13,7 @@ const menuItems = [
   { icon: Briefcase, label: "Job Applications", path: "/job-applications" },
   { icon: Brain, label: "Personal Memory", path: "/memory" },
   { icon: Zap, label: "AI Assistant", path: "/ai-assistant" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 interface DashboardLayoutProps {

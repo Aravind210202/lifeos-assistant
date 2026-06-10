@@ -139,3 +139,16 @@
 - [x] Color-code priority badges across all modules (Reminders, Goals, Job Applications)
 - [x] Add dynamic hover effects and transitions for better interactivity
 - [x] Enhance cards with gradient borders and shadow effects
+
+
+## Automation Features (NEW)
+- [ ] Google Calendar sync - sync reminders to calendar events
+- [ ] Google Sheets export - export all data (reminders, finance, goals, jobs)
+- [ ] Reminder notifications at specific times with browser/push notifications
+- [ ] Budget alerts when spending crosses category limits
+- [ ] Auto-categorization of transactions with ML/rules
+- [ ] CareerOps integration - pull job matches and sync to Jobs module
+- [ ] Scheduled job search - run at 4am nightly, find 1 job matching resume
+- [ ] Auto-add matched jobs to Jobs module for morning review
+- [ ] Calendar event to reminder conversion
+- [ ] Spending insights and trend analysis
