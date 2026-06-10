@@ -7,9 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, CheckCircle2, AlertCircle, TrendingUp, Target, Briefcase, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 import { getReminders, addReminder, getTransactions, getGoals, getJobApplications, Reminder, Transaction, Goal, JobApplication } from "@/lib/localStorage";
 
 export default function Dashboard() {
+  const [, navigate] = useLocation();
   const [todayReminders, setTodayReminders] = useState<Reminder[]>([]);
   const [overdueReminders, setOverdueReminders] = useState<Reminder[]>([]);
   const [totalSpent, setTotalSpent] = useState(0);
@@ -142,7 +144,7 @@ export default function Dashboard() {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         {/* Today's Reminders */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Today's Reminders</p>
@@ -153,7 +155,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Overdue */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/reminders')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Overdue Items</p>
@@ -164,7 +166,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Monthly Spending */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">This Month Spent</p>
@@ -175,7 +177,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Active Goals */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/goals')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Active Goals</p>
@@ -186,7 +188,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Weekly Spending */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">This Week Spent</p>
@@ -197,7 +199,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Subscriptions */}
-        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6 cursor-pointer hover:bg-white/20 transition-colors" onClick={() => navigate('/finance')}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground mb-1">Active Subscriptions</p>

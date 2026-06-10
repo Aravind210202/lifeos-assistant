@@ -123,3 +123,10 @@
 - [ ] Deployment guide
 - [ ] Feature documentation
 - [ ] User onboarding flow
+
+
+## Dashboard Improvements (NEW)
+- [x] Make dashboard stats cards clickable and navigable to Finance module
+- [x] Add weekly spending breakdown/summary view
+- [x] Add weekly category breakdown chart
+- [x] Make dashboard fully responsive on mobile

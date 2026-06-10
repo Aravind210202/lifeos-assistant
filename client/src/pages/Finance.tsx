@@ -129,6 +129,33 @@ export default function Finance() {
     const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
     const totalIncome = income.reduce((sum, t) => sum + t.amount, 0);
 
+    // Weekly breakdown
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    const weeklyData: Record<string, number> = {};
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(d.getDate() + i);
+      weeklyData[dayNames[i]] = 0;
+    }
+    
+    expenses.forEach(t => {
+      const tDate = new Date(t.date);
+      if (tDate >= weekStart && tDate <= weekEnd) {
+        const dayIndex = tDate.getDay();
+        weeklyData[dayNames[dayIndex]] += t.amount;
+      }
+    });
+    
+    const weeklyChartData = dayNames.map(day => ({
+      name: day,
+      amount: weeklyData[day]
+    }));
+
     const categoryBreakdown = CATEGORIES.map((cat) => {
       const amount = expenses
         .filter((t) => t.category === cat)
@@ -136,7 +163,7 @@ export default function Finance() {
       return { name: cat, value: amount };
     }).filter((c) => c.value > 0);
 
-    return { totalExpense, totalIncome, categoryBreakdown };
+    return { totalExpense, totalIncome, categoryBreakdown, weeklyChartData };
   }, [transactions]);
 
   return (
@@ -185,6 +212,20 @@ export default function Finance() {
             ${(stats.totalIncome - stats.totalExpense).toFixed(2)}
           </p>
         </div>
+      </div>
+
+      {/* Weekly Summary Chart */}
+      <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-lg p-6 card mb-8">
+        <h2 className="text-xl font-semibold text-foreground mb-4">Weekly Spending Summary</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stats.weeklyChartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+            <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
+            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <Tooltip formatter={(value: any) => `$${value.toFixed(2)}`} contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: 'none', borderRadius: '8px' }} />
+            <Bar dataKey="amount" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Charts */}
