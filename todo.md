@@ -111,6 +111,13 @@
 - [ ] Mobile responsiveness testing
 - [ ] Accessibility review
 
+## CSV Import Feature (NEW)
+- [x] Create CSV parser for CommBank NetBank format
+- [x] Implement auto-categorization logic for transactions
+- [x] Add CSV import UI to Finance module with file upload
+- [x] Update Dashboard to show weekly/monthly spend breakdown
+- [x] Display subscription tracking and savings updates
+
 ## Deployment & Documentation
 - [ ] Setup instructions
 - [ ] Deployment guide

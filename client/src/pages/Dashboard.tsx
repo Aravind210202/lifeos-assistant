@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, CheckCircle2, AlertCircle, TrendingUp, Target, Briefcase } from "lucide-react";
+import { Plus, CheckCircle2, AlertCircle, TrendingUp, Target, Briefcase, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { getReminders, addReminder, getTransactions, getGoals, getJobApplications, Reminder, Transaction, Goal, JobApplication } from "@/lib/localStorage";
 
@@ -15,6 +15,9 @@ export default function Dashboard() {
   const [totalSpent, setTotalSpent] = useState(0);
   const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
   const [jobFollowUps, setJobFollowUps] = useState<JobApplication[]>([]);
+  const [weeklySpent, setWeeklySpent] = useState(0);
+  const [categoryBreakdown, setCategoryBreakdown] = useState<Record<string, number>>({});
+  const [subscriptions, setSubscriptions] = useState<Transaction[]>([]);
   const [showAddReminder, setShowAddReminder] = useState(false);
   const [reminderForm, setReminderForm] = useState({
     title: "",
@@ -69,6 +72,34 @@ export default function Dashboard() {
     
     setTotalSpent(monthlySpent);
 
+    // Load weekly spending
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    const weeklySpentAmount = transactions
+      .filter(t => {
+        const tDate = new Date(t.date);
+        return t.type === "expense" && tDate >= weekStart && tDate <= weekEnd;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    setWeeklySpent(weeklySpentAmount);
+
+    // Load category breakdown
+    const breakdown: Record<string, number> = {};
+    transactions
+      .filter(t => t.type === "expense" && new Date(t.date) >= monthStart && new Date(t.date) <= monthEnd)
+      .forEach(t => {
+        breakdown[t.category] = (breakdown[t.category] || 0) + t.amount;
+      });
+    setCategoryBreakdown(breakdown);
+
+    // Load subscriptions
+    const subs = transactions.filter(t => t.category === "Subscriptions" && t.type === "expense");
+    setSubscriptions(subs);
+
     // Load active goals
     const goals = getGoals();
     setActiveGoals(goals.filter(g => g.status === "active").slice(0, 3));
@@ -109,7 +140,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         {/* Today's Reminders */}
         <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
           <div className="flex items-center justify-between">
@@ -151,6 +182,28 @@ export default function Dashboard() {
               <p className="text-3xl font-bold text-foreground">{activeGoals.length}</p>
             </div>
             <Target className="w-8 h-8 text-primary/50" />
+          </div>
+        </Card>
+
+        {/* Weekly Spending */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">This Week Spent</p>
+              <p className="text-3xl font-bold text-foreground">${weeklySpent.toFixed(2)}</p>
+            </div>
+            <BarChart3 className="w-8 h-8 text-primary/50" />
+          </div>
+        </Card>
+
+        {/* Subscriptions */}
+        <Card className="backdrop-blur-xl bg-white/10 border-white/20 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Active Subscriptions</p>
+              <p className="text-3xl font-bold text-foreground">{subscriptions.length}</p>
+            </div>
+            <Briefcase className="w-8 h-8 text-primary/50" />
           </div>
         </Card>
       </div>
